@@ -78,8 +78,8 @@ const Button: React.FC<CustomButtonProps> = ({
 
 const styles: any = ScaledSheet.create({
   baseButton: {
-    height: '48@vs',
-    borderRadius: '24@ms',
+    height: '44@vs',
+    borderRadius: '40@ms',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -89,12 +89,6 @@ const styles: any = ScaledSheet.create({
   },
   primaryButton: {
     backgroundColor: Colors.primary,
-    // Subtle shadow for premium feel
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
   },
   outlineButton: {
     backgroundColor: 'transparent',

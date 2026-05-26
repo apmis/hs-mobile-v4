@@ -2,7 +2,7 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors } from '../../constants/Theme';
+
 
 import { 
   Building2, 

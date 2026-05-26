@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Platform, StatusBar, TextInput, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '../../constants/Theme';
 import {
@@ -8,98 +8,77 @@ import {
   Activity, Heart, Profile2User, Building3,
   ShieldSecurity, Wallet3, Moneys, Building, Headphone,
   Personalcard, Send2, Calendar, CalendarTick, Routing,
-  Verify, ArrowRight2
+  Verify, ArrowRight2,
+  Book,
+  BookSaved,
+  Folder
 } from 'iconsax-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { FlaskConical, Search, TestTube, X } from 'lucide-react-native';
+import AppHeader from '../../components/AppHeader';
 
 const DEPARTMENTS = [
-  {
-    title: 'Medical',
-    Icon: Health,
-    headerColor: '#86EFAC', 
-    headerIconColor: '#166534', 
-    items: [
-      { name: 'Clinic', Icon: Hospital },
-      { name: 'Pharmacy', Icon: Briefcase },
-      { name: 'Radiology', Icon: Scanning },
-      { name: 'Blood Bank', Icon: Drop },
-      { name: 'Immunization', Icon: Activity },
-      { name: 'ECG', Icon: Heart },
-      { name: 'Theatre', Icon: Profile2User },
-      { name: 'Ward', Icon: Building3 },
-    ],
-  },
-  {
-    title: 'Admin',
-    Icon: ShieldTick,
-    headerColor: '#A5C2F6', 
-    headerIconColor: '#1D4ED8',
-    items: [
-      { name: 'Admin', Icon: ShieldSecurity },
-      { name: 'Accounting', Icon: Wallet3 },
-      { name: 'Finance', Icon: Moneys },
-      { name: 'Corporate', Icon: Building },
-      { name: 'CRM', Icon: Headphone },
-    ],
-  },
-  {
-    title: 'Operations',
-    Icon: People,
-    headerColor: '#86EFAC',
-    headerIconColor: '#166534',
-    items: [
-      { name: 'Case Management', Icon: Personalcard },
-      { name: 'Referral', Icon: Send2 },
-      { name: 'Schedule', Icon: Calendar },
-      { name: 'Appointments', Icon: CalendarTick },
-      { name: 'Appt Workflow', Icon: Routing },
-      { name: 'Managed Care', Icon: Verify },
-    ],
-  },
+   { name: 'Admin', Icon: ShieldSecurity },
+  {  name: 'Clients', Icon: Profile2User },
+   { name: 'Appointments', Icon: CalendarTick },
+  { name: 'Clinic', Icon: Hospital },
+  { name: 'Pharmacy', Icon: Briefcase },
+  { name: 'Laboratory', Icon:   FlaskConical  },
+  { name: 'Documentation', Icon:   Folder  },
+  { name: 'Radiology', Icon: Scanning },
+  { name: 'Blood Bank', Icon: Drop },
+  { name: 'Immunization', Icon: Activity },
+  { name: 'ECG', Icon: Heart },
+  { name: 'Theatre', Icon: Profile2User },
+  { name: 'Ward', Icon: Building3 },
+  { name: 'Accounting', Icon: Wallet3 },
+  { name: 'Finance', Icon: Moneys },
+  { name: 'Corporate', Icon: Building },
+  { name: 'CRM', Icon: Headphone },
+  { name: 'Case Management', Icon: Personalcard },
+  { name: 'Referral', Icon: Send2 },
+  { name: 'Schedule', Icon: Calendar },
+  { name: 'Appt Workflow', Icon: Routing },
+  { name: 'Managed Care', Icon: Verify },
 ];
 
 export default function DepartmentsScreen() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredDepartments = DEPARTMENTS.filter(item => 
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <AppHeader 
+        title="Modules"
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+      
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Department Directory</Text>
-          <Text style={styles.subtitle}>Navigate through our specialized medical, administrative, and operational units.</Text>
-        </View>
-
-        {DEPARTMENTS.map((dept, index) => (
-          <View key={index} style={styles.categoryContainer}>
-            <View style={styles.categoryHeader}>
-              <View style={[styles.categoryIconContainer, { backgroundColor: dept.headerColor }]}>
-                <dept.Icon size={moderateScale(18)} color={dept.headerIconColor} variant="Bold" />
+        <View style={styles.card}>
+          {filteredDepartments.map((item, itemIdx) => (
+            <Pressable 
+              key={itemIdx} 
+              style={({ pressed, hovered }: any) => [
+                styles.itemRow,
+                itemIdx !== filteredDepartments.length - 1 && styles.itemBorder,
+                (pressed || hovered) && styles.itemHovered
+              ]}
+              onPress={() => router.push(`/department/${item.name}`)}
+            >
+              <View style={styles.itemIconContainer}>
+                <item.Icon size={moderateScale(20)} color={Colors.primary} variant="Bold" />
               </View>
-              <Text style={styles.categoryTitle}>{dept.title}</Text>
-            </View>
-
-            <View style={styles.card}>
-              {dept.items.map((item, itemIdx) => (
-                <TouchableOpacity 
-                  key={itemIdx} 
-                  style={[
-                    styles.itemRow
-                    // itemIdx !== dept.items.length - 1 && styles.itemBorder
-                  ]}
-                  activeOpacity={0.7}
-                  onPress={() => router.push(`/department/${item.name}`)}
-                >
-                  <View style={styles.itemIconContainer}>
-                    <item.Icon size={moderateScale(20)} color={Colors.primary} variant="Bold" />
-                  </View>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <ArrowRight2 size={moderateScale(20)} color="#A0A0A0" variant="Linear" />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        ))}
+              <Text style={styles.itemName}>{item.name}</Text>
+              {/* <ArrowRight2 size={moderateScale(20)} color="#A0A0A0" variant="Linear" /> */}
+            </Pressable>
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -112,19 +91,36 @@ const styles = ScaledSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   scrollContent: {
-    padding: Spacing.md,
-    paddingBottom: Spacing.xl * 2,
+    paddingHorizontal: Spacing.md,
   },
   header: {
-    marginTop: Spacing.md,
-    marginBottom: Spacing.xl,
+    marginBottom: '14@vs',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    paddingBottom: '14@vs',
   },
   title: {
     fontSize: moderateScale(24),
     fontWeight: '800',
     color: '#1A1A1A',
-    marginBottom: Spacing.sm,
     letterSpacing: -0.5,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderRadius: moderateScale(12),
+    paddingHorizontal: moderateScale(16),
+    height: moderateScale(48),
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginTop: Spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: moderateScale(12),
+    fontSize: moderateScale(15),
+    color: Colors.text,
   },
   subtitle: {
     fontSize: moderateScale(15),
@@ -154,20 +150,21 @@ const styles = ScaledSheet.create({
     color: '#1A1A1A',
   },
   card: {
-    backgroundColor: Colors.white,
-    borderRadius: moderateScale(18),
-    paddingHorizontal: Spacing.md,
-    borderWidth: 0.5,
-    borderColor: '#E5E7EB',
+    backgroundColor: '#F7F9FA',
   },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderRadius: moderateScale(12),
+  },
+  itemHovered: {
+    backgroundColor: '#E5E7EB',
   },
   itemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: '#e2e2e2ff',
   },
   itemIconContainer: {
     width: moderateScale(40),

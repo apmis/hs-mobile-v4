@@ -1,13 +1,13 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Home2, People, MessageText, User } from 'iconsax-react-native';
+import { Call, Home2, MessageText, Profile, Setting2 } from 'iconsax-react-native';
 import { Colors } from '../../constants/Theme';
 import { Platform } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 
 export default function TabsLayout() {
   return (
-    <Tabs 
+    <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors.primary,
@@ -26,33 +26,35 @@ export default function TabsLayout() {
         }
       }}
     >
-      <Tabs.Screen 
-        name="index" 
+      <Tabs.Screen
+        name="chats"
         options={{
-          title: 'HEALTH',
-          tabBarIcon: ({ color, size }) => <Home2 size={size as number} color={color} variant="Bold" />,
-        }} 
+          title: 'Chats',
+          tabBarIcon: ({ color, size, focused }) => <MessageText size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
+        }}
       />
-      <Tabs.Screen 
-        name="departments" 
+      <Tabs.Screen
+        name="departments"
         options={{
-          title: 'DEPTS',
-          tabBarIcon: ({ color, size }) => <People size={size as number} color={color} variant="Bold" />,
-        }} 
+          title: 'Modules',
+          tabBarIcon: ({ color, size, focused }) => <Home2 size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
+        }}
       />
-      <Tabs.Screen 
-        name="chats" 
+
+      <Tabs.Screen
+        name="index"
         options={{
-          title: 'CHATS',
-          tabBarIcon: ({ color, size }) => <MessageText size={size as number} color={color} variant="Bold" />,
-        }} 
+          title: 'Calls',
+          tabBarIcon: ({ color, size, focused }) => <Call size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
+        }}
       />
-      <Tabs.Screen 
-        name="profile" 
+      
+      <Tabs.Screen
+        name="profile"
         options={{
-          title: 'PROFILE',
-          tabBarIcon: ({ color, size }) => <User size={size as number} color={color} variant="Bold" />,
-        }} 
+          title: 'Profile',
+          tabBarIcon: ({ color, size, focused }) => <Profile size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
+        }}
       />
     </Tabs>
   );

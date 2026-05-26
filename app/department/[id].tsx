@@ -11,14 +11,14 @@ import {
   Modal 
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '../../constants/Theme';
 
 // Icons
-import { ArrowLeft, Clock, Maximize4 } from 'iconsax-react-native';
+import { Maximize4 } from 'iconsax-react-native';
 import { 
-  MoreVertical, 
+ 
   Paperclip, 
   Send, 
   CheckCheck, 
@@ -27,12 +27,22 @@ import {
   CalendarDays,
   X 
 } from 'lucide-react-native';
+import AppHeader from '../../components/AppHeader';
 
 const FILTERS = [
   { id: 'queue', label: 'View Queue', Icon: ListTodo },
   { id: 'labs', label: 'Lab Requests', Icon: Microscope },
   { id: 'staff', label: 'Staff Schedule', Icon: CalendarDays },
 ];
+
+interface Message {
+  id: string;
+  sender: string;
+  text?: string;
+  time: string;
+  isMe: boolean;
+  image?: string;
+}
 
 export default function DepartmentDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -43,37 +53,7 @@ export default function DepartmentDetailScreen() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const [messages, setMessages] = useState([
-    {
-      id: '1',
-      sender: 'Dr. Sarah Chen',
-      text: 'Incoming patient from ER. Potential pulmonary embolism. Need an urgent contrast CT scan for Bay 4.',
-      time: '09:42 AM',
-      isMe: false,
-    },
-    {
-      id: '2',
-      sender: 'You',
-      text: 'Acknowledged. Clearing Table 2 now. Send the patient up in 5 mins.',
-      time: '09:43 AM',
-      isMe: true,
-    },
-    {
-      id: '3',
-      sender: 'Dr. Marcus Thorne',
-      text: 'Preliminary X-ray shows significant pleural effusion. Proceeding with caution.',
-      image: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?q=80&w=800&auto=format&fit=crop',
-      time: '09:45 AM',
-      isMe: false,
-    },
-    {
-      id: '4',
-      sender: 'You',
-      text: "Noted. We'll prioritize this scan. Ready for transport.",
-      time: '09:46 AM',
-      isMe: true,
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSend = () => {
     if (!inputText.trim()) return;
@@ -103,35 +83,49 @@ export default function DepartmentDetailScreen() {
   // Capitalize department name
   const deptName = typeof id === 'string' ? id : 'Radiology';
 
+  const getMoreOptions = () => {
+    switch (deptName) {
+      case 'Clinic':
+        return ['Appointments', 'Check-ins', 'Referrals'];
+      case 'Managed Care':
+        return [
+          'Search', 
+          'Appointments', 
+          'Check-ins', 
+          'Referrals', 
+          'Pre-authorisations', 
+          'Claims', 
+          'Payments', 
+          'Tariffs', 
+          'Complaints', 
+          'Analytics'
+        ];
+      default:
+        return undefined;
+    }
+  };
+
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1, backgroundColor: '#F8F9FA' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={0}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }} edges={['top', 'left', 'right']}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
+      >
       <Stack.Screen options={{ headerShown: false }} />
       
-      {/* Custom Header */}
-      <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10) }]}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
-        </TouchableOpacity>
-        
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>{deptName} Dept</Text>
-          <View style={styles.onlineStatus}>
-            <View style={styles.onlineDot} />
-            <Text style={styles.onlineText}>12 STAFF ONLINE</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.moreButton}>
-          <MoreVertical size={moderateScale(24)} color="#9CA3AF" />
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title={deptName} 
+        showBack={true} 
+        showSearch={false} 
+        showIcons={true}
+        showLocation={true}
+        showMoreOptions={true}
+        moreOptions={getMoreOptions()}
+      />
 
       {/* Filter Tabs */}
-      <View style={styles.filtersWrapper}>
+      {/* <View style={styles.filtersWrapper}>
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -152,7 +146,7 @@ export default function DepartmentDetailScreen() {
             );
           })}
         </ScrollView>
-      </View>
+      </View> */}
 
       {/* Chat Area */}
       <ScrollView 
@@ -163,9 +157,9 @@ export default function DepartmentDetailScreen() {
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
         {/* Date Separator */}
-        <View style={styles.dateSeparator}>
+        {/* <View style={styles.dateSeparator}>
           <Text style={styles.dateText}>TODAY, OCT 24</Text>
-        </View>
+        </View> */}
 
         {messages.map((msg) => (
           <View key={msg.id} style={msg.isMe ? styles.messageGroupRight : styles.messageGroupLeft}>
@@ -214,7 +208,7 @@ export default function DepartmentDetailScreen() {
           </TouchableOpacity>
           <TextInput 
             style={styles.textInput}
-            placeholder="Write medical update..."
+            placeholder="Ask Copilot"
             placeholderTextColor="#9CA3AF"
             value={inputText}
             onChangeText={setInputText}
@@ -244,7 +238,8 @@ export default function DepartmentDetailScreen() {
           )}
         </View>
       </Modal>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

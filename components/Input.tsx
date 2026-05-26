@@ -43,7 +43,7 @@ const styles: any = ScaledSheet.create({
     backgroundColor: '#EFEFEF', // Matches the design's light gray background for inputs
     borderRadius: '12@ms',
     paddingHorizontal: '12@ms',
-    height: '52@vs',
+    height: '45@vs',
   },
   iconContainer: {
     marginRight: '8@s',

@@ -6,7 +6,8 @@ import {
   KeyboardAvoidingView, 
   Platform, 
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react-native';
@@ -31,10 +32,10 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Shield size={moderateScale(32)} color={Colors.primary} fill={Colors.primary} />
+           <Image source={require('../../assets/images/healthstack-logo.png')} style={styles.logo} />
           </View>
           <Text style={styles.title}>Healthstack</Text>
-          <Text style={styles.subtitle}>Access your clinical workspace.</Text>
+          {/* <Text style={styles.subtitle}>Access your clinical workspace.</Text> */}
         </View>
 
         <View style={styles.formCard}>
@@ -69,14 +70,20 @@ export default function LoginScreen() {
             icon={<ArrowRight size={20} color={Colors.white} />}
             style={styles.signInButton}
           />
+          <TouchableOpacity 
+            style={styles.chatLoginLink}
+            onPress={() => router.push('/(auth)/chat-login')}
+          >
+            <Text style={styles.chatLoginText}>Or chat to login</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account?</Text>
           <Button 
-            title="Request Access" 
+            title="Create An Organization" 
             type="outline" 
-            onPress={() => {}} 
+            onPress={() => router.push('/(auth)/signup')} 
             style={styles.requestButton}
             textStyle={styles.requestButtonText}
           />
@@ -104,17 +111,11 @@ const styles: any = ScaledSheet.create({
   logoContainer: {
     width: '64@ms',
     height: '64@ms',
-    borderRadius: '16@ms',
-    backgroundColor: Colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '16@vs',
-    // Logo card shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   title: {
     ...Typography.h1,
@@ -129,12 +130,9 @@ const styles: any = ScaledSheet.create({
     width: '100%',
     backgroundColor: Colors.white,
     borderRadius: '24@ms',
-    padding: '24@ms',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    padding: '12@ms',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   passwordHeader: {
     flexDirection: 'row',
@@ -180,8 +178,8 @@ const styles: any = ScaledSheet.create({
     marginTop: 'auto',
     width: '100%',
     alignItems: 'center',
-    paddingTop: '40@vs',
-    paddingBottom: '20@vs',
+    paddingTop: '10@vs',
+    paddingBottom: '40@vs',
   },
   footerText: {
     fontSize: '14@ms',
@@ -194,4 +192,13 @@ const styles: any = ScaledSheet.create({
   requestButtonText: {
     color: '#0047AB',
   },
+  chatLoginLink: {
+    marginTop: moderateScale(16),
+    alignItems: 'center',
+  },
+  chatLoginText: {
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    color: Colors.primary,
+},
 });

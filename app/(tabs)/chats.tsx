@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Platform, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Platform, TextInput, Modal, KeyboardAvoidingView } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Spacing } from '../../constants/Theme';
 import { People, Edit2, Microscope } from 'iconsax-react-native';
-import { FileText, Search, X } from 'lucide-react-native';
+import { FileText, Search, X, Camera, MoreVertical, Bell } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import AppHeader from '../../components/AppHeader';
 
-const FILTERS = ['All Chats', '#x-Patient', '#Patient-Facility', '#Internal'];
+// Removing hard-coded filter line, implementing via state instead
 
 export const CHAT_LIST = [
   {
@@ -15,7 +16,7 @@ export const CHAT_LIST = [
     name: 'Surgical Team',
     message: 'Discussing Case #8821 - Pre-op cle...',
     time: '10:42 AM',
-    tag: '#x-Patient',
+    tag: 'Patient',
     tagColor: '#E0E7FF',
     tagTextColor: '#3730A3',
     avatarImg: 'https://images.unsplash.com/photo-1582750433449-648ed127d09e?q=80&w=200&auto=format&fit=crop', // Stock doctor team
@@ -31,7 +32,7 @@ export const CHAT_LIST = [
     name: 'Alex Rivera (Patient)',
     message: 'Care plan update: "Thank you ..."',
     time: '09:15 AM',
-    tag: '#Patient-St.Jude',
+    tag: 'Patient-St.Jude',
     tagColor: '#D1FAE5',
     tagTextColor: '#065F46',
     avatarImg: 'https://randomuser.me/api/portraits/men/44.jpg',
@@ -68,7 +69,7 @@ export const CHAT_LIST = [
     name: 'Sarah Jenkins (Patient)',
     message: 'Lab results inquiry: "Are the blood w...',
     time: 'Sun',
-    tag: '#Patient-MayoClinic',
+    tag: 'Patient-MayoClinic',
     tagColor: '#D1FAE5',
     tagTextColor: '#065F46',
     avatarImg: 'https://randomuser.me/api/portraits/women/33.jpg',
@@ -78,9 +79,11 @@ export const CHAT_LIST = [
 ];
 
 export default function ChatsScreen() {
-  const [activeFilter, setActiveFilter] = useState('All Chats');
-  const [isSearching, setIsSearching] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState(['All', 'Unread', 'Patient', 'System']);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [newFilterText, setNewFilterText] = useState('');
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -126,37 +129,17 @@ export default function ChatsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       {/* Main Header */}
-      <View style={styles.mainHeader}>
-        {isSearching ? (
-          <View style={styles.searchBarContainer}>
-            <Search size={moderateScale(20)} color="#9CA3AF" />
-            <TextInput 
-              style={styles.searchInput}
-              placeholder="Search chats by name or message..."
-              placeholderTextColor="#9CA3AF"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              autoFocus
-            />
-            <TouchableOpacity onPress={() => {
-              setIsSearching(false);
-              setSearchQuery('');
-            }} style={styles.closeSearchBtn}>
-              <X size={moderateScale(20)} color="#9CA3AF" />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <>
-            <View>
-              <Text style={styles.mainHeaderTitle}>Chats</Text>
-              <Text style={styles.mainHeaderSubtitle}>4 unread conversations</Text>
-            </View>
-            <TouchableOpacity style={styles.searchButton} onPress={() => setIsSearching(true)}>
-              <Search size={moderateScale(22)} color="#1F2937" />
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+      <AppHeader 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        showMoreOptions={true}
+        moreOptions={['New Chat', 'New Group','Settings',"Logout"]}
+        onOptionPress={(option) => {
+          if (option === 'Logout') {
+            router.replace('/(auth)/chat-login');
+          }
+        }}
+      />
 
       {/* Filters Header */}
       <View style={styles.filtersWrapper}>
@@ -165,7 +148,7 @@ export default function ChatsScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filtersScrollContent}
         >
-          {FILTERS.map((f, i) => {
+          {filters.map((f, i) => {
             const isActive = activeFilter === f;
             return (
               <TouchableOpacity
@@ -178,6 +161,14 @@ export default function ChatsScreen() {
               </TouchableOpacity>
             );
           })}
+          {/* Add Filter Pill */}
+          <TouchableOpacity
+            style={styles.filterPillAdd}
+            onPress={() => setShowFilterModal(true)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.filterTextAdd}>+</Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
 
@@ -240,6 +231,44 @@ export default function ChatsScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      {/* Add Filter Modal */}
+      <Modal visible={showFilterModal} transparent animationType="fade" onRequestClose={() => setShowFilterModal(false)}>
+        <KeyboardAvoidingView 
+          style={styles.modalOverlay} 
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <View style={styles.filterModalContent}>
+            <Text style={styles.filterModalTitle}>Add Custom Filter</Text>
+            <TextInput
+              style={styles.filterInput}
+              placeholder="e.g. ICU, Priority..."
+              placeholderTextColor="#9CA3AF"
+              value={newFilterText}
+              onChangeText={setNewFilterText}
+              autoFocus
+            />
+            <View style={styles.filterModalActions}>
+              <TouchableOpacity style={styles.filterModalBtn} onPress={() => {
+                setShowFilterModal(false);
+                setNewFilterText('');
+              }}>
+                <Text style={styles.filterModalBtnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.filterModalBtn, styles.filterModalBtnPrimary]} onPress={() => {
+                if(newFilterText.trim()) {
+                  setFilters([...filters, newFilterText.trim()]);
+                  setActiveFilter(newFilterText.trim());
+                }
+                setShowFilterModal(false);
+                setNewFilterText('');
+              }}>
+                <Text style={styles.filterModalBtnTextPrimary}>Add Filter</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -250,13 +279,16 @@ const styles = ScaledSheet.create({
     backgroundColor: Colors.white,
   },
   mainHeader: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
+    backgroundColor: Colors.white,
+  },
+  headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.sm,
-    paddingBottom: Spacing.xs,
-    backgroundColor: Colors.white,
+    marginBottom: moderateScale(16),
   },
   mainHeaderTitle: {
     fontSize: moderateScale(24),
@@ -269,7 +301,15 @@ const styles = ScaledSheet.create({
     fontWeight: '600',
     marginTop: moderateScale(2),
   },
-  searchButton: {
+  headerRightIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(16),
+  },
+  iconBtn: {
+    padding: moderateScale(4),
+  },
+  actionButton: {
     width: moderateScale(40),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
@@ -277,20 +317,22 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  searchBarContainer: {
-    flex: 1,
+   searchBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
-    borderRadius: moderateScale(20),
-    paddingHorizontal: moderateScale(12),
-    height: moderateScale(40),
+    backgroundColor: Colors.white,
+    borderRadius: moderateScale(12),
+    paddingHorizontal: moderateScale(16),
+    height: moderateScale(48),
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginTop: Spacing.sm,
   },
   searchInput: {
     flex: 1,
     marginLeft: moderateScale(8),
     fontSize: moderateScale(14),
-    color: '#1F2937',
+    color: Colors.text,
   },
   closeSearchBtn: {
     padding: moderateScale(4),
@@ -318,6 +360,78 @@ const styles = ScaledSheet.create({
     color: '#4B5563',
   },
   filterTextActive: {
+    color: Colors.white,
+  },
+  filterPillAdd: {
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderStyle: 'dashed',
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: moderateScale(10),
+    borderRadius: moderateScale(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterTextAdd: {
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: Spacing.xl,
+  },
+  filterModalContent: {
+    backgroundColor: Colors.white,
+    borderRadius: moderateScale(16),
+    padding: Spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  filterModalTitle: {
+    fontSize: moderateScale(18),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: Spacing.md,
+  },
+  filterInput: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: moderateScale(10),
+    paddingHorizontal: moderateScale(12),
+    minHeight: moderateScale(44),
+    fontSize: moderateScale(15),
+    color: '#1F2937',
+    marginBottom: Spacing.lg,
+  },
+  filterModalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: Spacing.sm,
+  },
+  filterModalBtn: {
+    paddingVertical: moderateScale(10),
+    paddingHorizontal: moderateScale(16),
+    borderRadius: moderateScale(8),
+  },
+  filterModalBtnPrimary: {
+    backgroundColor: '#0059B2',
+  },
+  filterModalBtnText: {
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  filterModalBtnTextPrimary: {
+    fontSize: moderateScale(14),
+    fontWeight: '600',
     color: Colors.white,
   },
   listContent: {
