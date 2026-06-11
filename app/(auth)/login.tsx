@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  KeyboardAvoidingView, 
-  Platform, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   TouchableOpacity,
   Image
@@ -12,9 +12,9 @@ import {
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { Colors, Typography } from '../../constants/Theme';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
+import { Colors, Typography } from '@/app/shared/constants/Theme';
+import Button from '@/app/shared/components/ui/Button';
+import Input from '@/app/shared/components/ui/Input';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -25,35 +25,35 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-           <Image source={require('../../assets/images/healthstack-logo.png')} style={styles.logo} />
+            <Image source={require('@/assets/images/healthstack-logo.png')} style={styles.logo} />
           </View>
           <Text style={styles.title}>Healthstack</Text>
           {/* <Text style={styles.subtitle}>Access your clinical workspace.</Text> */}
         </View>
 
         <View style={styles.formCard}>
-          <Input 
-            label="Email Address" 
+          <Input
+            label="Email Address"
             placeholder="name@medical-center.com"
             icon={<Mail size={20} color={Colors.textSecondary} />}
             autoCapitalize="none"
             keyboardType="email-address"
           />
-          
+
           <View style={styles.passwordHeader}>
             <Text style={styles.label}>Password</Text>
             <TouchableOpacity>
               <Text style={styles.forgotText}>Forgot Password?</Text>
             </TouchableOpacity>
           </View>
-          <Input 
+          <Input
             placeholder="••••••••••••"
             secureTextEntry
             icon={<Lock size={20} color={Colors.textSecondary} />}
@@ -64,13 +64,13 @@ export default function LoginScreen() {
             <Text style={styles.rememberText}>Remember this device</Text>
           </View>
 
-          <Button 
-            title="Sign In" 
+          <Button
+            title="Sign In"
             onPress={handleSignIn}
             icon={<ArrowRight size={20} color={Colors.white} />}
             style={styles.signInButton}
           />
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.chatLoginLink}
             onPress={() => router.push('/(auth)/chat-login')}
           >
@@ -80,10 +80,10 @@ export default function LoginScreen() {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account?</Text>
-          <Button 
-            title="Create An Organization" 
-            type="outline" 
-            onPress={() => router.push('/(auth)/signup')} 
+          <Button
+            title="Create An Organization"
+            type="outline"
+            onPress={() => router.push('/(auth)/signup')}
             style={styles.requestButton}
             textStyle={styles.requestButtonText}
           />
@@ -200,5 +200,5 @@ const styles: any = ScaledSheet.create({
     fontSize: moderateScale(14),
     fontWeight: '600',
     color: Colors.primary,
-},
+  },
 });

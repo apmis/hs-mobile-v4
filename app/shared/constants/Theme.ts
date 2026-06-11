@@ -52,3 +52,8 @@ export const Typography = {
     color: Colors.textSecondary,
   } as TextStyle,
 };
+
+// Dummy export to prevent Expo Router from complaining about a missing route component
+export default function ThemeRoute() {
+  return null;
+}

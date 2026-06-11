@@ -1,21 +1,21 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
   Image,
   StyleSheet
 } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { 
-  AlertTriangle, 
-  FileText, 
+import {
+  AlertTriangle,
+  FileText,
   Archive,
   MessageCircle,
   Stethoscope
 } from 'lucide-react-native';
-import { Colors, Typography } from '../constants/Theme';
+import { Colors, Typography } from '@/app/shared/constants/Theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 

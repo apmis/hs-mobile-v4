@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, Platform, TextInput, Modal, KeyboardAvoidingView } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 import { People, Edit2, Microscope } from 'iconsax-react-native';
 import { FileText, Search, X, Camera, MoreVertical, Bell } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '@/app/shared/components/AppHeader';
+//import AppHeader from '@/components/AppHeader';
 
 // Removing hard-coded filter line, implementing via state instead
 
@@ -96,7 +97,7 @@ export default function ChatsScreen() {
         </View>
       );
     }
-    
+
     if (chat.iconType === 'group') {
       return (
         <View style={styles.avatarWrapper}>
@@ -121,19 +122,19 @@ export default function ChatsScreen() {
     return null;
   };
 
-  const filteredChats = CHAT_LIST.filter(chat => 
-    chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredChats = CHAT_LIST.filter(chat =>
+    chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     chat.message.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       {/* Main Header */}
-      <AppHeader 
+      <AppHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         showMoreOptions={true}
-        moreOptions={['New Chat', 'New Group','Settings',"Logout"]}
+        moreOptions={['New Chat', 'New Group', 'Settings', "Logout"]}
         onOptionPress={(option) => {
           if (option === 'Logout') {
             router.replace('/(auth)/chat-login');
@@ -143,8 +144,8 @@ export default function ChatsScreen() {
 
       {/* Filters Header */}
       <View style={styles.filtersWrapper}>
-        <ScrollView 
-          horizontal 
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filtersScrollContent}
         >
@@ -173,19 +174,19 @@ export default function ChatsScreen() {
       </View>
 
       {/* Chat List */}
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + moderateScale(80) }]}
         showsVerticalScrollIndicator={false}
       >
         {filteredChats.map((chat) => (
-          <TouchableOpacity 
-            key={chat.id} 
+          <TouchableOpacity
+            key={chat.id}
             style={styles.chatRow}
             activeOpacity={0.7}
             onPress={() => router.push(`/chat/${chat.id}`)}
           >
             {renderAvatar(chat)}
-            
+
             <View style={styles.chatContent}>
               <View style={styles.chatHeader}>
                 <Text style={[styles.chatName, chat.unread && styles.chatNameUnread]}>
@@ -195,10 +196,10 @@ export default function ChatsScreen() {
                   {chat.time}
                 </Text>
               </View>
-              
+
               <View style={styles.chatSubHeader}>
-                <Text 
-                  style={[styles.chatMessage, chat.unread && styles.chatMessageUnread]} 
+                <Text
+                  style={[styles.chatMessage, chat.unread && styles.chatMessageUnread]}
                   numberOfLines={1}
                 >
                   {chat.message}
@@ -210,14 +211,14 @@ export default function ChatsScreen() {
                 <View style={[styles.tagPill, { backgroundColor: chat.tagColor }]}>
                   <Text style={[styles.tagText, { color: chat.tagTextColor }]}>{chat.tag}</Text>
                 </View>
-                
+
                 {chat.extraIcons && (
                   <View style={styles.extraIconsContainer}>
                     {chat.extraIcons.map((uri, idx) => (
-                      <Image 
-                        key={idx} 
-                        source={{ uri }} 
-                        style={[styles.smallAvatar, { marginLeft: idx > 0 ? -moderateScale(8) : moderateScale(8) }]} 
+                      <Image
+                        key={idx}
+                        source={{ uri }}
+                        style={[styles.smallAvatar, { marginLeft: idx > 0 ? -moderateScale(8) : moderateScale(8) }]}
                       />
                     ))}
                   </View>
@@ -234,8 +235,8 @@ export default function ChatsScreen() {
 
       {/* Add Filter Modal */}
       <Modal visible={showFilterModal} transparent animationType="fade" onRequestClose={() => setShowFilterModal(false)}>
-        <KeyboardAvoidingView 
-          style={styles.modalOverlay} 
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.filterModalContent}>
@@ -256,7 +257,7 @@ export default function ChatsScreen() {
                 <Text style={styles.filterModalBtnText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.filterModalBtn, styles.filterModalBtnPrimary]} onPress={() => {
-                if(newFilterText.trim()) {
+                if (newFilterText.trim()) {
                   setFilters([...filters, newFilterText.trim()]);
                   setActiveFilter(newFilterText.trim());
                 }
@@ -317,7 +318,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-   searchBarContainer: {
+  searchBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.white,

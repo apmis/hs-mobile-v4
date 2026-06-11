@@ -5,7 +5,7 @@ import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Search, X } from 'lucide-react-native';
 import { MessageText, Call } from 'iconsax-react-native';
-import { Colors, Typography, Spacing } from '../constants/Theme';
+import { Colors, Typography, Spacing } from './shared/constants/Theme';
 
 const STAFF_LIST = [
   { id: 'staff-0', name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', department: 'Cardiology', image: 'https://randomuser.me/api/portraits/women/44.jpg', isOnline: true },
@@ -25,8 +25,8 @@ export default function DirectoryScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredStaff = STAFF_LIST.filter(staff => 
-    staff.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredStaff = STAFF_LIST.filter(staff =>
+    staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staff.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staff.department.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -45,7 +45,7 @@ export default function DirectoryScreen() {
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <Search size={moderateScale(20)} color="#9CA3AF" />
-          <TextInput 
+          <TextInput
             style={styles.searchInput}
             placeholder="Search by name, specialty, or dept..."
             placeholderTextColor="#9CA3AF"
@@ -60,7 +60,7 @@ export default function DirectoryScreen() {
         </View>
       </View>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + moderateScale(40) }]}
         showsVerticalScrollIndicator={false}
       >
@@ -71,8 +71,8 @@ export default function DirectoryScreen() {
         </View>
 
         {filteredStaff.map((staff, idx) => (
-          <TouchableOpacity 
-            key={idx} 
+          <TouchableOpacity
+            key={idx}
             style={styles.staffCard}
             activeOpacity={0.8}
             onPress={() => router.push({
@@ -85,7 +85,7 @@ export default function DirectoryScreen() {
                 <Image source={{ uri: staff.image }} style={styles.avatarImg} />
                 {staff.isOnline && <View style={styles.onlineDot} />}
               </View>
-              
+
               <View style={styles.staffInfo}>
                 <Text style={styles.staffName} numberOfLines={1}>{staff.name}</Text>
                 <Text style={styles.staffSpecialty}>{staff.specialty}</Text>

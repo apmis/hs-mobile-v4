@@ -1,25 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput, 
-  Image, 
-  KeyboardAvoidingView, 
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
   Platform,
   ActivityIndicator
 } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 
 // Icons
 import { ArrowLeft } from 'iconsax-react-native';
-import { 
-  MoreVertical, 
-  Send, 
+import {
+  MoreVertical,
+  Send,
   CheckCheck,
   Building2,
   MapPin,
@@ -34,7 +34,7 @@ const SIGNUP_STEPS = [
   { field: 'orgType', label: 'Organization Type', step: 1, prompt: "What type of organization is it (e.g. Hospital, Clinic, Diagnostic Center)?" },
   { field: 'orgCategory', label: 'Organization Category', step: 1, prompt: "Under what category does it fall?" },
   { field: 'cacNumber', label: 'CAC Number', step: 1, prompt: "Please provide your CAC registration number." },
-  
+
   // STEP 2: Official Address
   { field: 'officialAddress', label: 'Official Address', step: 2, prompt: "Moving to Step 2: Official Details. What's the Official Address?" },
   { field: 'lga', label: 'LGA', step: 2, prompt: "Which Local Government Area (LGA)?" },
@@ -43,7 +43,7 @@ const SIGNUP_STEPS = [
   { field: 'country', label: 'Country', step: 2, prompt: "And the Country?" },
   { field: 'phone', label: 'Phone Number', step: 2, prompt: "What is the official Phone Number?" },
   { field: 'email', label: 'Email Address', step: 2, prompt: "And the official Email Address?" },
-  
+
   // STEP 3: Admin
   { field: 'adminFirstName', label: 'First Name', step: 3, prompt: "Great! Step 3 is for the ADMIN. What is your First Name?" },
   { field: 'adminLastName', label: 'Last Name', step: 3, prompt: "And your Last Name?" },
@@ -60,7 +60,7 @@ export default function SignupScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
-  
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [inputText, setInputText] = useState('');
@@ -87,7 +87,7 @@ export default function SignupScreen() {
 
   const handleSend = () => {
     if (!inputText.trim() || isTyping) return;
-    
+
     const userMessageText = inputText.trim();
     const currentStep = SIGNUP_STEPS[currentStepIndex];
     const timeStr = getTime();
@@ -95,7 +95,7 @@ export default function SignupScreen() {
     // Store the data
     const newFormData = { ...formData, [currentStep.field]: userMessageText };
     setFormData(newFormData);
-    
+
     // Add user message
     const userMessage = {
       id: `user-${Date.now()}`,
@@ -104,10 +104,10 @@ export default function SignupScreen() {
       time: timeStr,
       text: userMessageText,
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setInputText('');
-    
+
     // Scroll to bottom
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -117,7 +117,7 @@ export default function SignupScreen() {
     if (currentStepIndex < SIGNUP_STEPS.length - 1) {
       const nextIndex = currentStepIndex + 1;
       const nextStep = SIGNUP_STEPS[nextIndex];
-      
+
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
@@ -131,7 +131,7 @@ export default function SignupScreen() {
         };
         setMessages(prev => [...prev, botMessage]);
         setCurrentStepIndex(nextIndex);
-        
+
         setTimeout(() => {
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 100);
@@ -149,7 +149,7 @@ export default function SignupScreen() {
           text: "Registration successful! Welcome to the Healthstack family. Redirecting you to login...",
         };
         setMessages(prev => [...prev, finalMessage]);
-        
+
         setTimeout(() => {
           router.replace('/(auth)/chat-login');
         }, 2500);
@@ -162,23 +162,23 @@ export default function SignupScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }} edges={['top', 'left', 'right']}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}
       >
         <Stack.Screen options={{ headerShown: false }} />
-        
+
         {/* Header */}
         <View style={styles.headerContainer}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
           </TouchableOpacity>
-          
+
           <View style={styles.avatarContainer}>
-            <Image 
-              source={require('../../assets/images/Healthstack.png')} 
-              style={styles.headerAvatar} 
+            <Image
+              source={require('@/assets/images/Healthstack.png')}
+              style={styles.headerAvatar}
             />
             <View style={styles.onlineDot} />
           </View>
@@ -193,7 +193,7 @@ export default function SignupScreen() {
               </View>
             </View>
           </View>
-          
+
           <TouchableOpacity style={styles.iconButton}>
             <MoreVertical size={moderateScale(22)} color="#4B5563" />
           </TouchableOpacity>
@@ -204,9 +204,9 @@ export default function SignupScreen() {
           <View style={[styles.progressFill, { width: `${currentProgress}%` }]} />
         </View>
 
-        <ScrollView 
+        <ScrollView
           ref={scrollViewRef}
-          style={styles.chatArea} 
+          style={styles.chatArea}
           contentContainerStyle={styles.chatContent}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -229,7 +229,7 @@ export default function SignupScreen() {
                     </View>
                     <View style={styles.timeStatusContainerRight}>
                       <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                      <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{marginLeft: 4}} />
+                      <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
                     </View>
                   </View>
                 </View>
@@ -243,9 +243,9 @@ export default function SignupScreen() {
                     <View style={styles.stepLine} />
                     <View style={styles.stepLabelContainer}>
                       {msg.stepChange === 2 ? (
-                        <MapPin size={12} color="#6B7280" style={{marginRight: 4}} />
+                        <MapPin size={12} color="#6B7280" style={{ marginRight: 4 }} />
                       ) : (
-                        <User size={12} color="#6B7280" style={{marginRight: 4}} />
+                        <User size={12} color="#6B7280" style={{ marginRight: 4 }} />
                       )}
                       <Text style={styles.stepLabelText}>
                         {msg.stepChange === 2 ? "STEP 2: OFFICIAL ADDRESS" : "STEP 3: ADMIN DETAILS"}
@@ -254,7 +254,7 @@ export default function SignupScreen() {
                     <View style={styles.stepLine} />
                   </View>
                 )}
-                
+
                 <View style={styles.senderHeader}>
                   <View style={styles.senderBadge}>
                     <Text style={styles.senderBadgeText}>COPILOT</Text>
@@ -267,7 +267,7 @@ export default function SignupScreen() {
               </View>
             );
           })}
-          
+
           {isTyping && (
             <View style={styles.typingContainer}>
               <View style={styles.bubbleLeftTyping}>
@@ -280,7 +280,7 @@ export default function SignupScreen() {
         {/* Input Area */}
         <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
           <View style={styles.inputWrapper}>
-            <TextInput 
+            <TextInput
               style={styles.textInput}
               placeholder={SIGNUP_STEPS[currentStepIndex].label + "..."}
               placeholderTextColor="#9CA3AF"
@@ -291,15 +291,15 @@ export default function SignupScreen() {
               secureTextEntry={SIGNUP_STEPS[currentStepIndex].isPassword}
               returnKeyType="send"
             />
-            <TouchableOpacity 
-              style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]} 
+            <TouchableOpacity
+              style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
               onPress={handleSend}
               disabled={!inputText.trim() || isTyping}
             >
-              <Send 
-                size={moderateScale(18)} 
-                color="#FFFFFF" 
-                strokeWidth={2.5} 
+              <Send
+                size={moderateScale(18)}
+                color="#FFFFFF"
+                strokeWidth={2.5}
                 opacity={inputText.trim() ? 1 : 0.5}
               />
             </TouchableOpacity>

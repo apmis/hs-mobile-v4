@@ -1,11 +1,14 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Call, Home2, MessageText, Profile, Setting2 } from 'iconsax-react-native';
-import { Colors } from '../../constants/Theme';
+import { Colors } from '@/app/shared/constants/Theme';
 import { Platform } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
@@ -13,8 +16,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textSecondary,
         tabBarStyle: {
-          height: Platform.OS === 'ios' ? moderateScale(80) : moderateScale(60),
-          paddingBottom: Platform.OS === 'ios' ? moderateScale(25) : moderateScale(10),
+          height: Platform.OS === 'ios' ? moderateScale(60) + insets.bottom : moderateScale(60) + Math.max(insets.bottom, moderateScale(10)),
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom : Math.max(insets.bottom, moderateScale(10)),
           paddingTop: moderateScale(10),
           backgroundColor: Colors.white,
           borderTopWidth: 1,
@@ -48,7 +51,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size, focused }) => <Call size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
         }}
       />
-      
+
       <Tabs.Screen
         name="profile"
         options={{

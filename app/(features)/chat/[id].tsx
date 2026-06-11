@@ -1,40 +1,40 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput, 
-  Image, 
-  KeyboardAvoidingView, 
-  Platform 
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 
 // Icons
 import { ArrowLeft, DocumentDownload, Paperclip2, ChartSquare, Folder2, ExportSquare, TickCircle } from 'iconsax-react-native';
-import { 
-  MoreVertical, 
-  Send, 
+import {
+  MoreVertical,
+  Send,
   Video,
   Smile,
   Leaf,
   Activity,
   CheckCheck
 } from 'lucide-react-native';
-import { CHAT_LIST } from '../(tabs)/chats';
+import { CHAT_LIST } from '@/app/(tabs)/chats';
 
 export default function ChatWrapperScreen() {
   const { id, fallbackName, fallbackAvatar } = useLocalSearchParams();
   const chatItem = CHAT_LIST.find((c) => c.id === id);
-  
+
   if (id === '1' || chatItem?.iconType === 'group' || chatItem?.extraIcons) {
     return <GroupChatDetail id={id} chatItem={chatItem} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} />;
   }
-  
+
   return <ConsultationChatDetail id={id} chatItem={chatItem} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} />;
 }
 
@@ -46,7 +46,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
   const insets = useSafeAreaInsets();
   const [inputText, setInputText] = useState('');
   const scrollViewRef = React.useRef<ScrollView>(null);
-  
+
   const [messages, setMessages] = useState<any[]>([
     {
       id: '1',
@@ -111,19 +111,19 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#F8F9FA' }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={0}
     >
       <Stack.Screen options={{ headerShown: false }} />
-      
+
       {/* Header */}
       <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10) }]}>
         <TouchableOpacity style={styles.iconButtonLeft} onPress={() => router.back()}>
           <ArrowLeft size={moderateScale(24)} color="#4B5563" variant="Linear" />
         </TouchableOpacity>
-        
+
         {/* Avatars Cluster */}
         <View style={styles.groupAvatarCluster}>
           <Image source={{ uri: chatItem?.extraIcons?.[0] || 'https://randomuser.me/api/portraits/men/32.jpg' }} style={[styles.clusterImg, { zIndex: 3 }]} />
@@ -143,9 +143,9 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
-        style={styles.chatArea} 
+        style={styles.chatArea}
         contentContainerStyle={styles.chatContent}
         showsVerticalScrollIndicator={false}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -165,7 +165,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
             </View>
             <TouchableOpacity style={styles.viewCaseBtn} activeOpacity={0.8}>
               <Text style={styles.viewCaseBtnText}>View Case File</Text>
-              <ExportSquare size={moderateScale(14)} color="#FFFFFF" variant="Linear" style={{marginLeft: moderateScale(4)}} />
+              <ExportSquare size={moderateScale(14)} color="#FFFFFF" variant="Linear" style={{ marginLeft: moderateScale(4) }} />
             </TouchableOpacity>
           </View>
         </View>
@@ -197,7 +197,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
                   </View>
                   <View style={styles.timeStatusContainerRight}>
                     <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                    <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{marginLeft: 4}} />
+                    <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
                   </View>
                 </View>
               </View>
@@ -207,7 +207,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
           return (
             <View key={msg.id} style={styles.groupMessageRow}>
               <View style={styles.groupAvatarCol}>
-                 <Image source={{ uri: msg.avatar || 'https://randomuser.me/api/portraits/men/32.jpg' }} style={styles.groupMessageAvatar} />
+                <Image source={{ uri: msg.avatar || 'https://randomuser.me/api/portraits/men/32.jpg' }} style={styles.groupMessageAvatar} />
               </View>
               <View style={styles.groupMsgContentCol}>
                 <Text style={styles.groupSenderName}>{msg.sender}</Text>
@@ -235,7 +235,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
           <TouchableOpacity style={styles.attachButton}>
             <Paperclip2 size={moderateScale(22)} color="#9CA3AF" variant="Linear" />
           </TouchableOpacity>
-          <TextInput 
+          <TextInput
             style={styles.textInput}
             placeholder="Type a message..."
             placeholderTextColor="#9CA3AF"
@@ -263,7 +263,7 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
   const insets = useSafeAreaInsets();
   const [inputText, setInputText] = useState('');
   const scrollViewRef = React.useRef<ScrollView>(null);
-  
+
   const chatName = chatItem?.name || fallbackName || 'Medical Consultation';
   const chatAvatar = chatItem?.avatarImg || fallbackAvatar || 'https://randomuser.me/api/portraits/men/32.jpg';
   const isOnline = chatItem?.isOnline ?? true;
@@ -325,23 +325,23 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#F8F9FA' }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={0}
     >
       <Stack.Screen options={{ headerShown: false }} />
-      
+
       {/* Header */}
       <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10) }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
         </TouchableOpacity>
-        
+
         <View style={styles.avatarContainer}>
-          <Image 
-            source={{ uri: chatAvatar }} 
-            style={styles.headerAvatar} 
+          <Image
+            source={{ uri: chatAvatar }}
+            style={styles.headerAvatar}
           />
           {isOnline && <View style={styles.onlineDot} />}
         </View>
@@ -359,9 +359,9 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
-        style={styles.chatArea} 
+        style={styles.chatArea}
         contentContainerStyle={styles.chatContent}
         showsVerticalScrollIndicator={false}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -405,7 +405,7 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
                   </View>
                   <View style={styles.timeStatusContainerRight}>
                     <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                    <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{marginLeft: 4}} />
+                    <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
                   </View>
                 </View>
               </View>
@@ -456,7 +456,7 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
           <TouchableOpacity style={styles.attachButton}>
             <Paperclip2 size={moderateScale(22)} color="#9CA3AF" variant="Linear" />
           </TouchableOpacity>
-          <TextInput 
+          <TextInput
             style={styles.textInput}
             placeholder="Type a message..."
             placeholderTextColor="#9CA3AF"
@@ -573,7 +573,7 @@ const styles = ScaledSheet.create({
     color: '#6B7280',
     letterSpacing: 0.5,
   },
-  
+
   // Group Header specifics
   groupAvatarCluster: {
     flexDirection: 'row',
