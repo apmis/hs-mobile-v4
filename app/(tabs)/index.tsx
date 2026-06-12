@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 import { Link2, Phone, PhoneMissed, PhoneIncoming, PhoneOutgoing, Video } from 'lucide-react-native';
 
 const CALLS_DATA = [
@@ -57,7 +57,7 @@ export default function CallsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
+
         {/* Create Call Link */}
         <TouchableOpacity style={styles.createLinkCard} activeOpacity={0.7}>
           <View style={styles.linkIconContainer}>
@@ -78,7 +78,7 @@ export default function CallsScreen() {
               <View key={call.id}>
                 <TouchableOpacity style={styles.callRow} activeOpacity={0.7}>
                   <Image source={{ uri: call.avatar }} style={styles.avatar} />
-                  
+
                   <View style={styles.callDetails}>
                     <Text style={[styles.callerName, isMissed && styles.missedName]} numberOfLines={1}>
                       {call.name} {call.count ? `(${call.count})` : ''}
@@ -96,7 +96,7 @@ export default function CallsScreen() {
                   </View>
 
                   <View style={styles.actionIcons}>
-                    <TouchableOpacity style={styles.iconBtn} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+                    <TouchableOpacity style={styles.iconBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                       {call.isVideo ? (
                         <Video size={moderateScale(22)} color={Colors.primary} />
                       ) : (

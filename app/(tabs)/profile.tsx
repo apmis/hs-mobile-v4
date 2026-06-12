@@ -1,126 +1,29 @@
- import React from 'react';
+import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ProfileScreen from '../(features)/profile';
 
 
-import { 
-  Building2, 
-  ChevronRight, 
-  Bell, 
-  Lock, 
-  Palette, 
-  LogOut,
-  Hospital
-} from 'lucide-react-native';
-import { Verify } from 'iconsax-react-native';
 
-export default function ProfileScreen() {
-  const insets = useSafeAreaInsets();
-  
+// import { 
+//   Building2, 
+//   ChevronRight, 
+//   Bell, 
+//   Lock, 
+//   Palette, 
+//   LogOut,
+//   Hospital
+// } from 'lucide-react-native';
+// import { Verify } from 'iconsax-react-native';
+
+export default function Profile() {
+
   return (
     <View style={styles.container}>
-      <ScrollView 
-        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + moderateScale(20), paddingBottom: insets.bottom + moderateScale(40) }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Profile Avatar section */}
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarContainer}>
-            <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1594824432433-2ba7d4c9d5ec?q=80&w=200&auto=format&fit=crop' }} 
-              style={styles.avatar} 
-            />
-            <View style={styles.verifiedBadge}>
-              <View style={styles.verifiedBg} />
-              <Verify size={moderateScale(24)} color="#0059B2" variant="Bold" />
-            </View>
-          </View>
-          
-          <Text style={styles.name}>Alex Rivera</Text>
-          <Text style={styles.role}>Senior Care Coordinator</Text>
-          
-          <View style={styles.staffIdPill}>
-            <Text style={styles.staffIdText}>STAFF ID: 8820</Text>
-          </View>
-        </View>
-
-        {/* Facility Overview Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeaderRow}>
-            <Text style={styles.cardTitle}>Facility Overview</Text>
-            <Building2 size={moderateScale(20)} color="#0059B2" />
-          </View>
-          
-          <View style={styles.facilityContent}>
-            <View style={styles.facilityIconBox}>
-              <Hospital size={moderateScale(22)} color="#4B5563" />
-            </View>
-            <View style={styles.facilityInfo}>
-              <Text style={styles.activeSiteLabel}>ACTIVE SITE</Text>
-              <Text style={styles.facilityName}>Test Facility</Text>
-              <Text style={styles.facilityDesc}>North Wing - Specialized{'\n'}Diagnostics</Text>
-            </View>
-            <TouchableOpacity hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
-              <Text style={styles.changeLink}>Change</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Preferences Section */}
-        <Text style={styles.sectionTitle}>PREFERENCES</Text>
-        
-        <View style={styles.cardAlt}>
-          {/* Notifications */}
-          <TouchableOpacity style={styles.preferenceRow}>
-            <View style={[styles.prefIconBox, { backgroundColor: '#EFF6FF' }]}>
-              <Bell size={moderateScale(20)} color="#2563EB" />
-            </View>
-            <View style={styles.prefTextCol}>
-              <Text style={styles.prefTitle}>Notifications</Text>
-              <Text style={styles.prefSub}>Alerts, updates & health reports</Text>
-            </View>
-            <ChevronRight size={moderateScale(20)} color="#9CA3AF" />
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          {/* Privacy & Security */}
-          <TouchableOpacity style={styles.preferenceRow}>
-            <View style={[styles.prefIconBox, { backgroundColor: '#ECFDF5' }]}>
-              <Lock size={moderateScale(20)} color="#059669" />
-            </View>
-            <View style={styles.prefTextCol}>
-              <Text style={styles.prefTitle}>Privacy & Security</Text>
-              <Text style={styles.prefSub}>HIPAA compliance & data access</Text>
-            </View>
-            <ChevronRight size={moderateScale(20)} color="#9CA3AF" />
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          {/* Appearance */}
-          <TouchableOpacity style={styles.preferenceRow}>
-            <View style={[styles.prefIconBox, { backgroundColor: '#F5F3FF' }]}>
-              <Palette size={moderateScale(20)} color="#7C3AED" />
-            </View>
-            <View style={styles.prefTextCol}>
-              <Text style={styles.prefTitle}>Appearance</Text>
-              <Text style={styles.prefSub}>Theme settings & accessibility</Text>
-            </View>
-            <ChevronRight size={moderateScale(20)} color="#9CA3AF" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton}>
-          <LogOut size={moderateScale(20)} color="#DC2626" />
-          <Text style={styles.logoutText}>Logout from System</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.versionText}>VERSION 4.2.0-CLINICAL • BUILD 902</Text>
-
-      </ScrollView>
+      <ProfileScreen
+        styles={styles}
+      />
     </View>
   );
 }

@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput, 
-  Image, 
-  KeyboardAvoidingView, 
-  Platform 
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 
 // Icons
 import { ArrowLeft } from 'iconsax-react-native';
-import { 
-  MoreVertical, 
-  Send, 
+import {
+  MoreVertical,
+  Send,
   CheckCheck
 } from 'lucide-react-native';
 
@@ -27,9 +27,9 @@ export default function ChatLoginScreen() {
   const insets = useSafeAreaInsets();
   const [inputText, setInputText] = useState('');
   const scrollViewRef = React.useRef<ScrollView>(null);
-  
+
   const chatName = 'Healthstack Copilot';
-  const chatAvatar = require('../../assets/images/Healthstack.png');
+  const chatAvatar = require('@/assets/images/Healthstack.png');
   const isOnline = true;
 
   const [messages, setMessages] = useState<any[]>([
@@ -59,7 +59,7 @@ export default function ChatLoginScreen() {
       time: timeStr,
       text: inputText.trim()
     }]);
-    
+
     if (messages.length === 1) {
       setTimeout(() => {
         setMessages(prev => [...prev, {
@@ -93,19 +93,19 @@ export default function ChatLoginScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }} edges={['top', 'left', 'right']}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}
       >
         <Stack.Screen options={{ headerShown: false }} />
-        
+
         {/* Header */}
         <View style={styles.headerContainer}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
           </TouchableOpacity>
-          
+
           <View style={styles.avatarContainer}>
             <Image source={chatAvatar} style={styles.headerAvatar} />
             {isOnline && <View style={styles.onlineDot} />}
@@ -120,9 +120,9 @@ export default function ChatLoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView 
+        <ScrollView
           ref={scrollViewRef}
-          style={styles.chatArea} 
+          style={styles.chatArea}
           contentContainerStyle={styles.chatContent}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -142,7 +142,7 @@ export default function ChatLoginScreen() {
                     </View>
                     <View style={styles.timeStatusContainerRight}>
                       <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                      <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{marginLeft: 4}} />
+                      <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
                     </View>
                   </View>
                 </View>
@@ -168,7 +168,7 @@ export default function ChatLoginScreen() {
         {/* Input Area */}
         <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
           <View style={styles.inputWrapper}>
-            <TextInput 
+            <TextInput
               style={styles.textInput}
               placeholder="Type your response..."
               placeholderTextColor="#9CA3AF"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Pressable, Modal, TouchableWithoutFeedback } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 import { Bell, Camera, MoreVertical, Search, X } from 'lucide-react-native';
 import { ArrowLeft } from 'iconsax-react-native';
 import { useRouter } from 'expo-router';
@@ -23,11 +23,11 @@ interface AppHeaderProps {
   onOptionPress?: (option: string) => void;
 }
 
-export default function AppHeader({ 
-  title = "HealthStack", 
-  showBack = false, 
+export default function AppHeader({
+  title = "HealthStack",
+  showBack = false,
   showIcons = true,
-  searchQuery, 
+  searchQuery,
   setSearchQuery,
   showSearch = true,
   showLocation = false,
@@ -78,7 +78,7 @@ export default function AppHeader({
       {showSearch && setSearchQuery !== undefined && (
         <View style={styles.searchBarContainer}>
           <Search size={moderateScale(20)} color="#9CA3AF" />
-          <TextInput 
+          <TextInput
             style={styles.searchInput}
             placeholder="Ask Copilot"
             placeholderTextColor="#9CA3AF"
@@ -94,10 +94,10 @@ export default function AppHeader({
       )}
 
       {/* Location Bottom Sheet */}
-      <Modal 
-        visible={showLocationSheet} 
-        transparent={true} 
-        animationType="slide" 
+      <Modal
+        visible={showLocationSheet}
+        transparent={true}
+        animationType="slide"
         onRequestClose={() => setShowLocationSheet(false)}
       >
         <TouchableWithoutFeedback onPress={() => setShowLocationSheet(false)}>
@@ -106,10 +106,10 @@ export default function AppHeader({
               <View style={styles.bottomSheet}>
                 <View style={styles.sheetIndicator} />
                 <Text style={styles.sheetTitle}>Select Location</Text>
-                
+
                 {LOCATIONS.map((loc) => (
-                  <TouchableOpacity 
-                    key={loc} 
+                  <TouchableOpacity
+                    key={loc}
                     style={[
                       styles.locationItem,
                       selectedLocation === loc && styles.locationItemActive
@@ -132,10 +132,10 @@ export default function AppHeader({
       </Modal>
 
       {/* Dropdown Menu Modal */}
-      <Modal 
-        visible={showMoreMenu} 
-        transparent={true} 
-        animationType="fade" 
+      <Modal
+        visible={showMoreMenu}
+        transparent={true}
+        animationType="fade"
         onRequestClose={() => setShowMoreMenu(false)}
       >
         <TouchableWithoutFeedback onPress={() => setShowMoreMenu(false)}>
@@ -143,8 +143,8 @@ export default function AppHeader({
             <TouchableWithoutFeedback>
               <View style={[styles.dropdownMenu, { top: insets.top + moderateScale(45) }]}>
                 {moreOptions.map((option, index) => (
-                  <TouchableOpacity 
-                    key={option} 
+                  <TouchableOpacity
+                    key={option}
                     style={[
                       styles.dropdownItem,
                       index !== moreOptions.length - 1 && styles.dropdownItemBorder
@@ -155,7 +155,7 @@ export default function AppHeader({
                     }}
                   >
                     <Text style={[
-                      styles.dropdownItemText, 
+                      styles.dropdownItemText,
                       (option === 'Delete' || option === 'Logout') && styles.dropdownItemTextDanger
                     ]}>{option}</Text>
                   </TouchableOpacity>

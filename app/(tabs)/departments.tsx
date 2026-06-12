@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Platform, StatusBar, TextInput, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 import {
   Health, ShieldTick, People,
   Hospital, Briefcase, Scanning, Drop,
@@ -16,16 +16,17 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { FlaskConical, Search, TestTube, X } from 'lucide-react-native';
-import AppHeader from '../../components/AppHeader';
+//import AppHeader from '@/components/AppHeader';
+import AppHeader from '@/app/shared/components/AppHeader';
 
 const DEPARTMENTS = [
-   { name: 'Admin', Icon: ShieldSecurity },
-  {  name: 'Clients', Icon: Profile2User },
-   { name: 'Appointments', Icon: CalendarTick },
+  { name: 'Admin', Icon: ShieldSecurity },
+  { name: 'Clients', Icon: Profile2User },
+  { name: 'Appointments', Icon: CalendarTick },
   { name: 'Clinic', Icon: Hospital },
   { name: 'Pharmacy', Icon: Briefcase },
-  { name: 'Laboratory', Icon:   FlaskConical  },
-  { name: 'Documentation', Icon:   Folder  },
+  { name: 'Laboratory', Icon: FlaskConical },
+  { name: 'Documentation', Icon: Folder },
   { name: 'Radiology', Icon: Scanning },
   { name: 'Blood Bank', Icon: Drop },
   { name: 'Immunization', Icon: Activity },
@@ -47,23 +48,23 @@ export default function DepartmentsScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredDepartments = DEPARTMENTS.filter(item => 
+  const filteredDepartments = DEPARTMENTS.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <AppHeader 
+      <AppHeader
         title="Modules"
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-      
+
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           {filteredDepartments.map((item, itemIdx) => (
-            <Pressable 
-              key={itemIdx} 
+            <Pressable
+              key={itemIdx}
               style={({ pressed, hovered }: any) => [
                 styles.itemRow,
                 itemIdx !== filteredDepartments.length - 1 && styles.itemBorder,

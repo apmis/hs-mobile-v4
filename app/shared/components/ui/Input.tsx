@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, Text, TextInputProps, ViewStyle, StyleProp } from 'react-native';
 import { ScaledSheet } from 'react-native-size-matters';
-import { Colors } from '../constants/Theme';
+import { Colors } from '@/app/shared/constants/Theme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -15,10 +15,10 @@ const Input: React.FC<InputProps> = ({ label, icon, containerStyle, ...props }) 
       {label && <Text style={styles.label}>{label}</Text>}
       <View style={styles.inputWrapper}>
         {icon && <View style={styles.iconContainer}>{icon}</View>}
-        <TextInput 
-          style={styles.input} 
+        <TextInput
+          style={styles.input}
           placeholderTextColor={Colors.textSecondary}
-          {...props} 
+          {...props}
         />
       </View>
     </View>

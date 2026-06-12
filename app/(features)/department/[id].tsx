@@ -1,33 +1,33 @@
 import React, { useState, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput, 
-  Image, 
-  KeyboardAvoidingView, 
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
   Platform,
-  Modal 
+  Modal
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '../../constants/Theme';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
 
 // Icons
 import { Maximize4 } from 'iconsax-react-native';
-import { 
- 
-  Paperclip, 
-  Send, 
-  CheckCheck, 
-  ListTodo, 
-  Microscope, 
+import {
+
+  Paperclip,
+  Send,
+  CheckCheck,
+  ListTodo,
+  Microscope,
   CalendarDays,
-  X 
+  X
 } from 'lucide-react-native';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '@/app/shared/components/AppHeader';
 
 const FILTERS = [
   { id: 'queue', label: 'View Queue', Icon: ListTodo },
@@ -58,7 +58,7 @@ export default function DepartmentDetailScreen() {
   const handleSend = () => {
     if (!inputText.trim()) return;
     const now = new Date();
-    
+
     const hours = now.getHours();
     const mins = now.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -74,7 +74,7 @@ export default function DepartmentDetailScreen() {
       isMe: true,
     }]);
     setInputText('');
-    
+
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 100);
@@ -89,15 +89,15 @@ export default function DepartmentDetailScreen() {
         return ['Appointments', 'Check-ins', 'Referrals'];
       case 'Managed Care':
         return [
-          'Search', 
-          'Appointments', 
-          'Check-ins', 
-          'Referrals', 
-          'Pre-authorisations', 
-          'Claims', 
-          'Payments', 
-          'Tariffs', 
-          'Complaints', 
+          'Search',
+          'Appointments',
+          'Check-ins',
+          'Referrals',
+          'Pre-authorisations',
+          'Claims',
+          'Payments',
+          'Tariffs',
+          'Complaints',
           'Analytics'
         ];
       default:
@@ -107,25 +107,25 @@ export default function DepartmentDetailScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }} edges={['top', 'left', 'right']}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}
       >
-      <Stack.Screen options={{ headerShown: false }} />
-      
-      <AppHeader 
-        title={deptName} 
-        showBack={true} 
-        showSearch={false} 
-        showIcons={true}
-        showLocation={true}
-        showMoreOptions={true}
-        moreOptions={getMoreOptions()}
-      />
+        <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Filter Tabs */}
-      {/* <View style={styles.filtersWrapper}>
+        <AppHeader
+          title={deptName}
+          showBack={true}
+          showSearch={false}
+          showIcons={true}
+          showLocation={true}
+          showMoreOptions={true}
+          moreOptions={getMoreOptions()}
+        />
+
+        {/* Filter Tabs */}
+        {/* <View style={styles.filtersWrapper}>
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -148,96 +148,96 @@ export default function DepartmentDetailScreen() {
         </ScrollView>
       </View> */}
 
-      {/* Chat Area */}
-      <ScrollView 
-        ref={scrollViewRef}
-        style={styles.chatArea} 
-        contentContainerStyle={styles.chatContent}
-        showsVerticalScrollIndicator={false}
-        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-      >
-        {/* Date Separator */}
-        {/* <View style={styles.dateSeparator}>
+        {/* Chat Area */}
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.chatArea}
+          contentContainerStyle={styles.chatContent}
+          showsVerticalScrollIndicator={false}
+          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+        >
+          {/* Date Separator */}
+          {/* <View style={styles.dateSeparator}>
           <Text style={styles.dateText}>TODAY, OCT 24</Text>
         </View> */}
 
-        {messages.map((msg) => (
-          <View key={msg.id} style={msg.isMe ? styles.messageGroupRight : styles.messageGroupLeft}>
-            <Text style={msg.isMe ? styles.senderNameRight : styles.senderName}>{msg.sender}</Text>
-            
-            <View style={msg.isMe ? styles.bubbleRight : styles.bubbleLeft}>
-              {msg.image && (
-                <TouchableOpacity 
-                  activeOpacity={0.8}
-                  style={styles.imageAttachmentContainer}
-                  onPress={() => setPreviewImage(msg.image || null)}
-                >
-                  <Image 
-                    source={{ uri: msg.image }} 
-                    style={styles.attachmentImage}
-                  />
-                  <View style={styles.expandIconContainer}>
-                    <Maximize4 size={moderateScale(24)} color="#FFFFFF" variant="Linear" />
-                  </View>
-                </TouchableOpacity>
-              )}
-              
-              {msg.text && (
-                <Text style={[
-                  msg.isMe ? styles.messageTextRight : styles.messageTextLeft,
-                  msg.image && { marginTop: moderateScale(12) }
-                ]}>
-                  {msg.text}
-                </Text>
-              )}
-            </View>
-            
-            <View style={msg.isMe ? styles.timeStatusContainer : null}>
-              <Text style={styles.timeLabel}>{msg.time}</Text>
-              {msg.isMe && <CheckCheck size={moderateScale(14)} color="#0059B2" style={{ marginLeft: 4 }} />}
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+          {messages.map((msg) => (
+            <View key={msg.id} style={msg.isMe ? styles.messageGroupRight : styles.messageGroupLeft}>
+              <Text style={msg.isMe ? styles.senderNameRight : styles.senderName}>{msg.sender}</Text>
 
-      {/* Input Area */}
-      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
-        <View style={styles.inputWrapper}>
-          <TouchableOpacity style={styles.attachButton}>
-            <Paperclip size={moderateScale(20)} color="#6B7280" />
-          </TouchableOpacity>
-          <TextInput 
-            style={styles.textInput}
-            placeholder="Ask Copilot"
-            placeholderTextColor="#9CA3AF"
-            value={inputText}
-            onChangeText={setInputText}
-            multiline
-            onSubmitEditing={handleSend}
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Send size={moderateScale(18)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-        </View>
-      </View>
+              <View style={msg.isMe ? styles.bubbleRight : styles.bubbleLeft}>
+                {msg.image && (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.imageAttachmentContainer}
+                    onPress={() => setPreviewImage(msg.image || null)}
+                  >
+                    <Image
+                      source={{ uri: msg.image }}
+                      style={styles.attachmentImage}
+                    />
+                    <View style={styles.expandIconContainer}>
+                      <Maximize4 size={moderateScale(24)} color="#FFFFFF" variant="Linear" />
+                    </View>
+                  </TouchableOpacity>
+                )}
 
-      <Modal visible={!!previewImage} transparent={true} animationType="fade" onRequestClose={() => setPreviewImage(null)}>
-        <View style={styles.modalContainer}>
-          <TouchableOpacity 
-            style={[styles.closeModalButton, { top: insets.top + moderateScale(20) }]} 
-            onPress={() => setPreviewImage(null)}
-          >
-            <X size={moderateScale(28)} color="#FFFFFF" />
-          </TouchableOpacity>
-          {previewImage && (
-            <Image 
-              source={{ uri: previewImage }} 
-              style={styles.modalImage} 
-              resizeMode="contain"
+                {msg.text && (
+                  <Text style={[
+                    msg.isMe ? styles.messageTextRight : styles.messageTextLeft,
+                    msg.image && { marginTop: moderateScale(12) }
+                  ]}>
+                    {msg.text}
+                  </Text>
+                )}
+              </View>
+
+              <View style={msg.isMe ? styles.timeStatusContainer : null}>
+                <Text style={styles.timeLabel}>{msg.time}</Text>
+                {msg.isMe && <CheckCheck size={moderateScale(14)} color="#0059B2" style={{ marginLeft: 4 }} />}
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+
+        {/* Input Area */}
+        <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
+          <View style={styles.inputWrapper}>
+            <TouchableOpacity style={styles.attachButton}>
+              <Paperclip size={moderateScale(20)} color="#6B7280" />
+            </TouchableOpacity>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Ask Copilot"
+              placeholderTextColor="#9CA3AF"
+              value={inputText}
+              onChangeText={setInputText}
+              multiline
+              onSubmitEditing={handleSend}
             />
-          )}
+            <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+              <Send size={moderateScale(18)} color="#FFFFFF" strokeWidth={2.5} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </Modal>
+
+        <Modal visible={!!previewImage} transparent={true} animationType="fade" onRequestClose={() => setPreviewImage(null)}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity
+              style={[styles.closeModalButton, { top: insets.top + moderateScale(20) }]}
+              onPress={() => setPreviewImage(null)}
+            >
+              <X size={moderateScale(28)} color="#FFFFFF" />
+            </TouchableOpacity>
+            {previewImage && (
+              <Image
+                source={{ uri: previewImage }}
+                style={styles.modalImage}
+                resizeMode="contain"
+              />
+            )}
+          </View>
+        </Modal>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors } from '../constants/Theme';
+import { Colors } from '@/app/shared/constants/Theme';
 
 interface CardProps {
   children: React.ReactNode;

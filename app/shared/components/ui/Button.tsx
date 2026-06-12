@@ -1,14 +1,14 @@
 import React from 'react';
-import { 
-  TouchableOpacity, 
-  Text, 
+import {
+  TouchableOpacity,
+  Text,
   ActivityIndicator,
   ViewStyle,
   TextStyle,
   StyleProp
 } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors } from '../constants/Theme';
+import { Colors } from '@/app/shared/constants/Theme';
 
 interface CustomButtonProps {
   title: string;
@@ -21,12 +21,12 @@ interface CustomButtonProps {
   textStyle?: StyleProp<TextStyle>;
 }
 
-const Button: React.FC<CustomButtonProps> = ({ 
-  title, 
-  onPress, 
-  type = 'primary', 
-  loading = false, 
-  disabled = false, 
+const Button: React.FC<CustomButtonProps> = ({
+  title,
+  onPress,
+  type = 'primary',
+  loading = false,
+  disabled = false,
   icon,
   style,
   textStyle
@@ -58,8 +58,8 @@ const Button: React.FC<CustomButtonProps> = ({
   };
 
   return (
-    <TouchableOpacity 
-      onPress={onPress} 
+    <TouchableOpacity
+      onPress={onPress}
       style={[styles.baseButton, getButtonStyle(), style, (disabled || loading) && styles.disabledButton]}
       disabled={disabled || loading}
       activeOpacity={0.7}
