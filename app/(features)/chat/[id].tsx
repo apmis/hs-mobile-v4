@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '@/app/shared/constants/Theme';
+import { useThemeColor } from '../../shared/hooks/useThemeColor';
 
 // Icons
 import { ArrowLeft, DocumentDownload, Paperclip2, ChartSquare, Folder2, ExportSquare, TickCircle } from 'iconsax-react-native';
@@ -25,17 +26,17 @@ import {
   Activity,
   CheckCheck
 } from 'lucide-react-native';
-import { CHAT_LIST } from '@/app/(tabs)/chats';
+import { CHAT_LIST } from '@/app/(features)/chat/_components/chatList';
 
 export default function ChatWrapperScreen() {
-  const { id, fallbackName, fallbackAvatar } = useLocalSearchParams();
-  const chatItem = CHAT_LIST.find((c) => c.id === id);
+  const { id, fallbackName, fallbackAvatar, initialQuery } = useLocalSearchParams();
+  const chatItem = CHAT_LIST.find((c: any) => c.id === id);
 
   if (id === '1' || chatItem?.iconType === 'group' || chatItem?.extraIcons) {
-    return <GroupChatDetail id={id} chatItem={chatItem} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} />;
+    return <GroupChatDetail id={id} chatItem={chatItem} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} initialQuery={initialQuery} />;
   }
 
-  return <ConsultationChatDetail id={id} chatItem={chatItem} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} />;
+  return <ConsultationChatDetail id={id} chatItem={chatItem} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} initialQuery={initialQuery} />;
 }
 
 // -------------------------------------------------------------
@@ -110,18 +111,25 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
     }, 100);
   };
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#F8F9FA' }}
+      style={{ flex: 1, backgroundColor }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={0}
     >
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10) }]}>
+      <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10), backgroundColor: cardColor, borderBottomColor: borderColor }]}>
         <TouchableOpacity style={styles.iconButtonLeft} onPress={() => router.back()}>
-          <ArrowLeft size={moderateScale(24)} color="#4B5563" variant="Linear" />
+          <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
         </TouchableOpacity>
 
         {/* Avatars Cluster */}
@@ -134,12 +142,12 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
         </View>
 
         <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle} numberOfLines={1}>{chatItem?.name || fallbackName || 'Surgical Team'}</Text>
-          <Text style={styles.headerSubtitleGroup}>{chatItem?.tag || '#X-PATIENT  •  CASE #8821'}</Text>
+          <Text style={[styles.headerTitle, { color: primaryColor }]} numberOfLines={1}>{chatItem?.name || fallbackName || 'Surgical Team'}</Text>
+          <Text style={[styles.headerSubtitleGroup, { color: textSecondaryColor }]}>{chatItem?.tag || '#X-PATIENT  •  CASE #8821'}</Text>
         </View>
 
         <TouchableOpacity style={styles.iconButton}>
-          <MoreVertical size={moderateScale(24)} color="#4B5563" />
+          <MoreVertical size={moderateScale(24)} color={textSecondaryColor} />
         </TouchableOpacity>
       </View>
 
@@ -151,19 +159,19 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
         {/* Pinned Case File Card */}
-        <View style={styles.pinnedCaseCard}>
-          <View style={styles.pinnedBlueAccent} />
+        <View style={[styles.pinnedCaseCard, { backgroundColor: cardColor, borderColor }]}>
+          <View style={[styles.pinnedBlueAccent, { backgroundColor: primaryColor }]} />
           <View style={styles.pinnedContent}>
             <View style={styles.pinnedLeft}>
-              <View style={styles.pinnedIconBox}>
+              <View style={[styles.pinnedIconBox, { backgroundColor: primaryColor + '20' }]}>
                 <Image source={{ uri: 'https://cdn-icons-png.flaticon.com/512/337/337946.png' }} style={styles.folderIcon} />
               </View>
               <View style={styles.pinnedTextCol}>
-                <Text style={styles.pinnedTitle}>Case #8821: Post-Op Strategy</Text>
-                <Text style={styles.pinnedSub}>Last updated 14 mins ago</Text>
+                <Text style={[styles.pinnedTitle, { color: textColor }]}>Case #8821: Post-Op Strategy</Text>
+                <Text style={[styles.pinnedSub, { color: textSecondaryColor }]}>Last updated 14 mins ago</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.viewCaseBtn} activeOpacity={0.8}>
+            <TouchableOpacity style={[styles.viewCaseBtn, { backgroundColor: primaryColor }]} activeOpacity={0.8}>
               <Text style={styles.viewCaseBtnText}>View Case File</Text>
               <ExportSquare size={moderateScale(14)} color="#FFFFFF" variant="Linear" style={{ marginLeft: moderateScale(4) }} />
             </TouchableOpacity>
@@ -171,7 +179,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
         </View>
 
         {/* Date */}
-        <View style={styles.dateSeparator}><Text style={styles.dateText}>TODAY</Text></View>
+        <View style={[styles.dateSeparator, { backgroundColor: borderColor }]}><Text style={[styles.dateText, { color: textSecondaryColor }]}>TODAY</Text></View>
 
         {messages.map((msg) => {
           if (msg.type === 'alert') {
@@ -189,15 +197,15 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
             return (
               <View key={msg.id} style={styles.groupMessageRowRight}>
                 <View style={styles.groupMsgContentColRight}>
-                  <Text style={styles.groupSenderNameRight}>{msg.sender}</Text>
-                  <View style={styles.bubbleRightGroup}>
+                  <Text style={[styles.groupSenderNameRight, { color: primaryColor }]}>{msg.sender}</Text>
+                  <View style={[styles.bubbleRightGroup, { backgroundColor: primaryColor }]}>
                     <Text style={styles.messageTextRight}>
                       {msg.text}
                     </Text>
                   </View>
                   <View style={styles.timeStatusContainerRight}>
-                    <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                    <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
+                    <Text style={[styles.groupTimeLabelRight, { color: textSecondaryColor }]}>{msg.time}</Text>
+                    <CheckCheck size={moderateScale(14)} color={primaryColor} style={{ marginLeft: 4 }} />
                   </View>
                 </View>
               </View>
@@ -210,19 +218,19 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
                 <Image source={{ uri: msg.avatar || 'https://randomuser.me/api/portraits/men/32.jpg' }} style={styles.groupMessageAvatar} />
               </View>
               <View style={styles.groupMsgContentCol}>
-                <Text style={styles.groupSenderName}>{msg.sender}</Text>
-                <View style={styles.bubbleLeftGroup}>
-                  <Text style={styles.messageTextLeft}>
+                <Text style={[styles.groupSenderName, { color: textSecondaryColor }]}>{msg.sender}</Text>
+                <View style={[styles.bubbleLeftGroup, { backgroundColor: cardColor, borderColor }]}>
+                  <Text style={[styles.messageTextLeft, { color: textColor }]}>
                     {msg.text}
                   </Text>
                   {msg.attachmentName && (
-                    <View style={styles.innerAttachmentBlock}>
+                    <View style={[styles.innerAttachmentBlock, { backgroundColor: borderColor }]}>
                       <ChartSquare size={moderateScale(16)} color="#065F46" variant="Bold" />
                       <Text style={styles.innerAttachmentText}>{msg.attachmentName}</Text>
                     </View>
                   )}
                 </View>
-                <Text style={styles.groupTimeLabelLeft}>{msg.time}</Text>
+                <Text style={[styles.groupTimeLabelLeft, { color: textSecondaryColor }]}>{msg.time}</Text>
               </View>
             </View>
           );
@@ -230,23 +238,23 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
       </ScrollView>
 
       {/* Standard Input Area */}
-      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
-        <View style={styles.inputWrapper}>
+      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20), backgroundColor }]}>
+        <View style={[styles.inputWrapper, { backgroundColor: borderColor }]}>
           <TouchableOpacity style={styles.attachButton}>
-            <Paperclip2 size={moderateScale(22)} color="#9CA3AF" variant="Linear" />
+            <Paperclip2 size={moderateScale(22)} color={textSecondaryColor} variant="Linear" />
           </TouchableOpacity>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, { color: textColor }]}
             placeholder="Type a message..."
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={textSecondaryColor}
             value={inputText}
             onChangeText={setInputText}
             onSubmitEditing={handleSend}
           />
           <TouchableOpacity style={styles.smileButton}>
-            <Smile size={moderateScale(22)} color="#9CA3AF" />
+            <Smile size={moderateScale(22)} color={textSecondaryColor} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <TouchableOpacity style={[styles.sendButton, { backgroundColor: primaryColor }]} onPress={handleSend}>
             <Send size={moderateScale(18)} color="#FFFFFF" strokeWidth={2.5} />
           </TouchableOpacity>
         </View>
@@ -258,7 +266,7 @@ function GroupChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
 // -------------------------------------------------------------
 // 2) CONSULTATION CHAT UI (For "Medical Consultation")
 // -------------------------------------------------------------
-function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: any) {
+function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar, initialQuery }: any) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [inputText, setInputText] = useState('');
@@ -268,38 +276,52 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
   const chatAvatar = chatItem?.avatarImg || fallbackAvatar || 'https://randomuser.me/api/portraits/men/32.jpg';
   const isOnline = chatItem?.isOnline ?? true;
 
-  const [messages, setMessages] = useState<any[]>([
-    {
-      id: '1',
-      isMe: false,
-      sender: 'CARE TEAM',
-      time: '10:15 AM',
-      text: "Hello Alex, we've finished reviewing your latest laboratory results from yesterday's check-up. Based on your progress, we've made some positive adjustments to your recovery schedule.",
-    },
-    {
-      id: '2',
-      isMe: false,
-      sender: 'CARE TEAM',
-      time: '10:16 AM',
-      file: {
-        name: 'Updated Care Plan.pdf',
-        size: '1.4 MB • Medical File',
+  const [messages, setMessages] = useState<any[]>(() => {
+    const baseMessages = [
+      {
+        id: '1',
+        isMe: false,
+        sender: 'CARE TEAM',
+        time: '10:15 AM',
+        text: "Hello Alex, we've finished reviewing your latest laboratory results from yesterday's check-up. Based on your progress, we've made some positive adjustments to your recovery schedule.",
+      },
+      {
+        id: '2',
+        isMe: false,
+        sender: 'CARE TEAM',
+        time: '10:16 AM',
+        file: {
+          name: 'Updated Care Plan.pdf',
+          size: '1.4 MB • Medical File',
+        }
+      },
+      {
+        id: '3',
+        isMe: false,
+        sender: 'CARE TEAM',
+        time: '10:18 AM',
+        text: "The new plan reduces your physical therapy frequency while increasing low-impact mobility exercises. Please take a look and let us know if you have any questions before our call tomorrow. You're doing great! 🌿",
+      },
+      {
+        id: '4',
+        type: 'insight',
+        title: 'RECOVERY INSIGHT',
+        desc: 'Your mobility score improved by 12% this week. Keep it up!',
       }
-    },
-    {
-      id: '3',
-      isMe: false,
-      sender: 'CARE TEAM',
-      time: '10:18 AM',
-      text: "The new plan reduces your physical therapy frequency while increasing low-impact mobility exercises. Please take a look and let us know if you have any questions before our call tomorrow. You're doing great! 🌿",
-    },
-    {
-      id: '4',
-      type: 'insight',
-      title: 'RECOVERY INSIGHT',
-      desc: 'Your mobility score improved by 12% this week. Keep it up!',
+    ];
+
+    if (initialQuery) {
+      baseMessages.push({
+        id: 'initial_query',
+        isMe: true,
+        sender: 'You',
+        time: 'Now',
+        text: initialQuery
+      });
     }
-  ]);
+
+    return baseMessages;
+  });
 
   const handleSend = () => {
     if (!inputText.trim()) return;
@@ -324,18 +346,25 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
     }, 100);
   };
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#F8F9FA' }}
+      style={{ flex: 1, backgroundColor }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={0}
     >
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10) }]}>
+      <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10), backgroundColor: cardColor, borderBottomColor: borderColor }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
+          <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
         </TouchableOpacity>
 
         <View style={styles.avatarContainer}>
@@ -343,19 +372,19 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
             source={{ uri: chatAvatar }}
             style={styles.headerAvatar}
           />
-          {isOnline && <View style={styles.onlineDot} />}
+          {isOnline && <View style={[styles.onlineDot, { borderColor: cardColor }]} />}
         </View>
 
         <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle} numberOfLines={1}>{chatName}</Text>
-          <Text style={[styles.onlineText, !isOnline && { color: '#6B7280' }]}>{isOnline ? 'Active Now' : 'Offline'}</Text>
+          <Text style={[styles.headerTitle, { color: primaryColor }]} numberOfLines={1}>{chatName}</Text>
+          <Text style={[styles.onlineText, !isOnline && { color: textSecondaryColor }]}>{isOnline ? 'Active Now' : 'Offline'}</Text>
         </View>
 
         <TouchableOpacity style={styles.iconButton}>
-          <Video size={moderateScale(24)} color="#4B5563" />
+          <Video size={moderateScale(24)} color={textSecondaryColor} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>
-          <MoreVertical size={moderateScale(24)} color="#4B5563" />
+          <MoreVertical size={moderateScale(24)} color={textSecondaryColor} />
         </TouchableOpacity>
       </View>
 
@@ -367,15 +396,15 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
         <View style={styles.sessionPillContainer}>
-          <View style={styles.sessionPill}>
-            <Text style={styles.sessionPillText}>
-              SESSION: <Text style={{ color: '#0059B2', fontWeight: '700' }}>ALEX RIVERA (PATIENT)</Text>  •  #PATIENT-ST.JUDE
+          <View style={[styles.sessionPill, { backgroundColor: borderColor }]}>
+            <Text style={[styles.sessionPillText, { color: textSecondaryColor }]}>
+              SESSION: <Text style={{ color: primaryColor, fontWeight: '700' }}>ALEX RIVERA (PATIENT)</Text>  •  #PATIENT-ST.JUDE
             </Text>
           </View>
         </View>
 
-        <View style={styles.dateSeparator}>
-          <Text style={styles.dateText}>TODAY, OCT 24</Text>
+        <View style={[styles.dateSeparator, { backgroundColor: borderColor }]}>
+          <Text style={[styles.dateText, { color: textSecondaryColor }]}>TODAY, OCT 24</Text>
         </View>
 
         {messages.map((msg) => {
@@ -397,15 +426,15 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
             return (
               <View key={msg.id} style={styles.groupMessageRowRight}>
                 <View style={styles.groupMsgContentColRight}>
-                  <Text style={styles.groupSenderNameRight}>{msg.sender}</Text>
-                  <View style={styles.bubbleRightGroup}>
+                  <Text style={[styles.groupSenderNameRight, { color: primaryColor }]}>{msg.sender}</Text>
+                  <View style={[styles.bubbleRightGroup, { backgroundColor: primaryColor }]}>
                     <Text style={styles.messageTextRight}>
                       {msg.text}
                     </Text>
                   </View>
                   <View style={styles.timeStatusContainerRight}>
-                    <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                    <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
+                    <Text style={[styles.groupTimeLabelRight, { color: textSecondaryColor }]}>{msg.time}</Text>
+                    <CheckCheck size={moderateScale(14)} color={primaryColor} style={{ marginLeft: 4 }} />
                   </View>
                 </View>
               </View>
@@ -415,21 +444,21 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
           if (msg.file) {
             return (
               <View key={msg.id} style={styles.messageGroupLeftConsult}>
-                <View style={styles.fileAttachmentBorder}>
+                <View style={[styles.fileAttachmentBorder, { backgroundColor: cardColor, borderColor }]}>
                   <View style={styles.fileAttachmentCard}>
-                    <View style={styles.fileIconBox}>
+                    <View style={[styles.fileIconBox, { backgroundColor: primaryColor + '20' }]}>
                       <Image source={{ uri: 'https://cdn-icons-png.flaticon.com/512/337/337946.png' }} style={styles.pdfIcon} />
                     </View>
                     <View style={styles.fileInfo}>
-                      <Text style={styles.fileName}>{msg.file.name}</Text>
-                      <Text style={styles.fileSize}>{msg.file.size}</Text>
+                      <Text style={[styles.fileName, { color: textColor }]}>{msg.file.name}</Text>
+                      <Text style={[styles.fileSize, { color: textSecondaryColor }]}>{msg.file.size}</Text>
                     </View>
-                    <TouchableOpacity style={styles.downloadBtn}>
-                      <DocumentDownload size={moderateScale(20)} color="#0059B2" variant="Outline" />
+                    <TouchableOpacity style={[styles.downloadBtn, { borderColor }]}>
+                      <DocumentDownload size={moderateScale(20)} color={primaryColor} variant="Outline" />
                     </TouchableOpacity>
                   </View>
                 </View>
-                <Text style={[styles.timeLabel, { marginTop: moderateScale(4) }]}>{msg.time}</Text>
+                <Text style={[styles.timeLabel, { marginTop: moderateScale(4), color: textSecondaryColor }]}>{msg.time}</Text>
               </View>
             );
           }
@@ -437,13 +466,13 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
           return (
             <View key={msg.id} style={styles.messageGroupLeftConsult}>
               <View style={styles.senderHeader}>
-                <View style={styles.senderBadge}>
-                  <Text style={styles.senderBadgeText}>{msg.sender}</Text>
+                <View style={[styles.senderBadge, { backgroundColor: borderColor }]}>
+                  <Text style={[styles.senderBadgeText, { color: textSecondaryColor }]}>{msg.sender}</Text>
                 </View>
-                <Text style={styles.timeLabel}>{msg.time}</Text>
+                <Text style={[styles.timeLabel, { color: textSecondaryColor }]}>{msg.time}</Text>
               </View>
-              <View style={styles.bubbleLeft}>
-                <Text style={styles.messageTextLeft}>{msg.text}</Text>
+              <View style={[styles.bubbleLeft, { backgroundColor: cardColor, borderColor }]}>
+                <Text style={[styles.messageTextLeft, { color: textColor }]}>{msg.text}</Text>
               </View>
             </View>
           );
@@ -451,23 +480,23 @@ function ConsultationChatDetail({ id, chatItem, fallbackName, fallbackAvatar }: 
       </ScrollView>
 
       {/* Input Area */}
-      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
-        <View style={styles.inputWrapper}>
+      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20), backgroundColor }]}>
+        <View style={[styles.inputWrapper, { backgroundColor: borderColor }]}>
           <TouchableOpacity style={styles.attachButton}>
-            <Paperclip2 size={moderateScale(22)} color="#9CA3AF" variant="Linear" />
+            <Paperclip2 size={moderateScale(22)} color={textSecondaryColor} variant="Linear" />
           </TouchableOpacity>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, { color: textColor }]}
             placeholder="Type a message..."
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={textSecondaryColor}
             value={inputText}
             onChangeText={setInputText}
             onSubmitEditing={handleSend}
           />
           <TouchableOpacity style={styles.smileButton}>
-            <Smile size={moderateScale(22)} color="#9CA3AF" />
+            <Smile size={moderateScale(22)} color={textSecondaryColor} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <TouchableOpacity style={[styles.sendButton, { backgroundColor: primaryColor }]} onPress={handleSend}>
             <Send size={moderateScale(18)} color="#FFFFFF" strokeWidth={2.5} />
           </TouchableOpacity>
         </View>

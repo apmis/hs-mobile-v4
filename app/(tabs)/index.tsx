@@ -1,117 +1,89 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Platform, StatusBar, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import { Spacing } from '@/app/shared/constants/Theme';
+import {
+  Hospital, Briefcase, Scanning, Drop,
+  Activity, Heart, Profile2User, Building3,
+  ShieldSecurity, Wallet3, Moneys, Building, Headphone,
+  Personalcard, Send2, Calendar, CalendarTick, Routing,
+  Verify,
+  Folder
+} from 'iconsax-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Spacing } from '@/app/shared/constants/Theme';
-import { Link2, Phone, PhoneMissed, PhoneIncoming, PhoneOutgoing, Video } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { FlaskConical } from 'lucide-react-native';
+import AppHeader from '@/app/shared/components/AppHeader';
+import { useThemeColor } from '../shared/hooks/useThemeColor';
 
-const CALLS_DATA = [
-  {
-    id: '1',
-    name: 'Alex Rivera',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    type: 'missed',
-    isVideo: false,
-    date: 'Today, 10:45 AM',
-    count: 2
-  },
-  {
-    id: '2',
-    name: 'Surgical Team',
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-    type: 'outgoing',
-    isVideo: true,
-    date: 'Yesterday, 4:20 PM'
-  },
-  {
-    id: '3',
-    name: 'Dr. Sarah Jenkins',
-    avatar: 'https://images.unsplash.com/photo-1594824432433-2ba7d4c9d5ec?q=80&w=200&auto=format&fit=crop',
-    type: 'incoming',
-    isVideo: true,
-    date: 'Yesterday, 1:15 PM'
-  },
-  {
-    id: '4',
-    name: 'Marcus Chen, RN',
-    avatar: 'https://randomuser.me/api/portraits/men/46.jpg',
-    type: 'incoming',
-    isVideo: false,
-    date: 'Monday, 9:00 AM'
-  },
-  {
-    id: '5',
-    name: 'Oncology Research',
-    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-    type: 'missed',
-    isVideo: true,
-    date: 'Sunday, 11:30 AM'
-  }
+const DEPARTMENTS = [
+  { name: 'Accounting', Icon: Wallet3 },
+  { name: 'Admin', Icon: ShieldSecurity },
+  { name: 'Appointments', Icon: CalendarTick },
+  { name: 'Appt Workflow', Icon: Routing },
+  { name: 'Blood Bank', Icon: Drop },
+  { name: 'CRM', Icon: Headphone },
+  { name: 'Case Management', Icon: Personalcard },
+  { name: 'Clients', Icon: Profile2User },
+  { name: 'Clinic', Icon: Hospital },
+  { name: 'Corporate', Icon: Building },
+  { name: 'Documentation', Icon: Folder },
+  { name: 'ECG', Icon: Heart },
+  { name: 'Finance', Icon: Moneys },
+  { name: 'Immunization', Icon: Activity },
+  { name: 'Laboratory', Icon: FlaskConical },
+  { name: 'Managed Care', Icon: Verify },
+  { name: 'Pharmacy', Icon: Briefcase },
+  { name: 'Radiology', Icon: Scanning },
+  { name: 'Referral', Icon: Send2 },
+  { name: 'Schedule', Icon: Calendar },
+  { name: 'Theatre', Icon: Profile2User },
+  { name: 'Ward', Icon: Building3 },
 ];
 
-export default function CallsScreen() {
+export default function DepartmentsScreen() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+  const primaryLightColor = useThemeColor({}, 'primaryLight');
+
+  const filteredDepartments = DEPARTMENTS.filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Calls</Text>
-      </View>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+      <AppHeader
+        title="Departments"
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-        {/* Create Call Link */}
-        <TouchableOpacity style={styles.createLinkCard} activeOpacity={0.7}>
-          <View style={styles.linkIconContainer}>
-            <Link2 size={moderateScale(20)} color="#FFFFFF" strokeWidth={2.5} />
-          </View>
-          <View style={styles.linkTextContainer}>
-            <Text style={styles.linkTitle}>Create call link</Text>
-            <Text style={styles.linkSubtitle}>Share a link for your Stack call</Text>
-          </View>
-        </TouchableOpacity>
-
-        <Text style={styles.sectionTitle}>Recent</Text>
-
-        <View style={styles.callsCard}>
-          {CALLS_DATA.map((call, idx) => {
-            const isMissed = call.type === 'missed';
-            return (
-              <View key={call.id}>
-                <TouchableOpacity style={styles.callRow} activeOpacity={0.7}>
-                  <Image source={{ uri: call.avatar }} style={styles.avatar} />
-
-                  <View style={styles.callDetails}>
-                    <Text style={[styles.callerName, isMissed && styles.missedName]} numberOfLines={1}>
-                      {call.name} {call.count ? `(${call.count})` : ''}
-                    </Text>
-                    <View style={styles.callMetaRow}>
-                      {call.type === 'missed' ? (
-                        <PhoneMissed size={moderateScale(14)} color="#DC2626" />
-                      ) : call.type === 'incoming' ? (
-                        <PhoneIncoming size={moderateScale(14)} color="#059669" />
-                      ) : (
-                        <PhoneOutgoing size={moderateScale(14)} color="#6B7280" />
-                      )}
-                      <Text style={styles.timeText}>{call.date}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.actionIcons}>
-                    <TouchableOpacity style={styles.iconBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                      {call.isVideo ? (
-                        <Video size={moderateScale(22)} color={Colors.primary} />
-                      ) : (
-                        <Phone size={moderateScale(20)} color={Colors.primary} />
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-
-                {idx !== CALLS_DATA.length - 1 && <View style={styles.divider} />}
+        <View style={[styles.card, { backgroundColor }]}>
+          {filteredDepartments.map((item, itemIdx) => (
+            <Pressable
+              key={itemIdx}
+              style={({ pressed, hovered }: any) => [
+                styles.itemRow,
+                itemIdx !== filteredDepartments.length - 1 && [styles.itemBorder, { borderBottomColor: borderColor }],
+                (pressed || hovered) && { backgroundColor: primaryLightColor }
+              ]}
+              onPress={() => router.push(`/departments/${item.name}`)}
+            >
+              <View style={[styles.itemIconContainer, { backgroundColor: cardColor }]}>
+                <item.Icon size={moderateScale(20)} color={primaryColor} variant="Bold" />
               </View>
-            );
-          })}
+              <Text style={[styles.itemName, { color: textColor }]}>{item.name}</Text>
+              {/* <ArrowRight2 size={moderateScale(20)} color={textSecondaryColor} variant="Linear" /> */}
+            </Pressable>
+          ))}
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -120,115 +92,85 @@ export default function CallsScreen() {
 const styles = ScaledSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
+  scrollContent: {
+    paddingHorizontal: Spacing.md,
+  },
   header: {
-    paddingHorizontal: moderateScale(20),
+    marginBottom: '14@vs',
+    borderBottomWidth: 1,
     paddingBottom: '14@vs',
-    marginBottom: '8@vs',
   },
   title: {
-    fontSize: moderateScale(28),
+    fontSize: moderateScale(24),
     fontWeight: '800',
-    color: '#1A1A1A',
     letterSpacing: -0.5,
   },
-  scrollContent: {
-    paddingHorizontal: moderateScale(20),
-    paddingBottom: Spacing.xl * 2,
-  },
-  createLinkCard: {
+  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white,
-    padding: moderateScale(16),
-    borderRadius: moderateScale(16),
-    marginBottom: moderateScale(24),
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  linkIconContainer: {
-    width: moderateScale(44),
-    height: moderateScale(44),
-    borderRadius: moderateScale(22),
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: moderateScale(16),
-  },
-  linkTextContainer: {
-    flex: 1,
-  },
-  linkTitle: {
-    fontSize: moderateScale(16),
-    fontWeight: '700',
-    color: Colors.primary,
-    marginBottom: moderateScale(2),
-  },
-  linkSubtitle: {
-    fontSize: moderateScale(13),
-    color: '#6B7280',
-  },
-  sectionTitle: {
-    fontSize: moderateScale(16),
-    fontWeight: '800',
-    color: '#1A1A1A',
-    marginBottom: moderateScale(12),
-    marginLeft: moderateScale(4),
-  },
-  callsCard: {
-    backgroundColor: Colors.white,
-    borderRadius: moderateScale(16),
+    borderRadius: moderateScale(12),
     paddingHorizontal: moderateScale(16),
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  callRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: moderateScale(14),
-  },
-  avatar: {
-    width: moderateScale(48),
     height: moderateScale(48),
-    borderRadius: moderateScale(24),
-    marginRight: moderateScale(14),
-    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    marginTop: Spacing.sm,
   },
-  callDetails: {
+  searchInput: {
     flex: 1,
+    marginLeft: moderateScale(12),
+    fontSize: moderateScale(15),
+  },
+  subtitle: {
+    fontSize: moderateScale(15),
+    lineHeight: moderateScale(22),
+    fontWeight: '400',
+  },
+  categoryContainer: {
+    marginBottom: Spacing.lg,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  categoryIconContainer: {
+    width: moderateScale(30),
+    height: moderateScale(30),
+    borderRadius: moderateScale(12),
     justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.sm,
   },
-  callerName: {
-    fontSize: moderateScale(16),
+  categoryTitle: {
+    fontSize: moderateScale(20),
     fontWeight: '700',
-    color: '#1F2937',
-    marginBottom: moderateScale(4),
   },
-  missedName: {
-    color: '#DC2626',
+  card: {
   },
-  callMetaRow: {
+  itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderRadius: moderateScale(12),
   },
-  timeText: {
-    fontSize: moderateScale(13),
-    color: '#6B7280',
-    marginLeft: moderateScale(6),
+  itemHovered: {
   },
-  actionIcons: {
-    flexDirection: 'row',
+  itemBorder: {
+    borderBottomWidth: 1,
+  },
+  itemIconContainer: {
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: moderateScale(12),
+    marginRight: Spacing.md,
   },
-  iconBtn: {
-    padding: moderateScale(4),
+  itemName: {
+    flex: 1,
+    fontSize: moderateScale(16),
+    fontWeight: '600',
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#F3F4F6',
-    marginLeft: moderateScale(62),
-  }
 });

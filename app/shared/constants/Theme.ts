@@ -19,6 +19,24 @@ export const Colors = {
   white: '#FFFFFF',
 };
 
+export const DarkColors = {
+  primary: '#1E88E5',
+  primaryLight: '#0D47A1',
+  secondary: '#A0A0A0',
+  background: '#1a1919ff',
+  card: '#1E1E1E',
+  text: '#E0E0E0',
+  textSecondary: '#A0A0A0',
+  success: '#1B5E20',
+  successText: '#81C784',
+  warning: '#E65100',
+  warningText: '#FFB74D',
+  error: '#B71C1C',
+  errorText: '#E57373',
+  border: '#2C2C2C',
+  white: '#FFFFFF',
+};
+
 export const Spacing = {
   xs: moderateScale(4),
   sm: moderateScale(8),
@@ -31,25 +49,20 @@ export const Typography = {
   h1: {
     fontSize: moderateScale(28),
     fontWeight: '700' as const,
-    color: Colors.text,
   } as TextStyle,
   h2: {
     fontSize: moderateScale(22),
     fontWeight: '600' as const,
-    color: Colors.text,
   } as TextStyle,
   subtitle: {
     fontSize: moderateScale(16),
-    color: Colors.textSecondary,
     fontWeight: '400' as const,
   } as TextStyle,
   body: {
     fontSize: moderateScale(14),
-    color: Colors.text,
   } as TextStyle,
   caption: {
     fontSize: moderateScale(12),
-    color: Colors.textSecondary,
   } as TextStyle,
 };
 

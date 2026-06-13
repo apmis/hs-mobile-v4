@@ -13,6 +13,7 @@ import { useRouter, Stack } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '@/app/shared/constants/Theme';
+import { useThemeColor } from '../shared/hooks/useThemeColor';
 
 // Icons
 import { ArrowLeft } from 'iconsax-react-native';
@@ -91,8 +92,16 @@ export default function ChatLoginScreen() {
     }, 100);
   };
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+  //const tintColor = useThemeColor({}, 'tint');
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -101,22 +110,22 @@ export default function ChatLoginScreen() {
         <Stack.Screen options={{ headerShown: false }} />
 
         {/* Header */}
-        <View style={styles.headerContainer}>
+        <View style={[styles.headerContainer, { backgroundColor: cardColor, borderBottomColor: borderColor }]}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
+            <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
           </TouchableOpacity>
 
           <View style={styles.avatarContainer}>
             <Image source={chatAvatar} style={styles.headerAvatar} />
-            {isOnline && <View style={styles.onlineDot} />}
+            {isOnline && <View style={[styles.onlineDot, { borderColor: cardColor }]} />}
           </View>
 
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle} numberOfLines={1}>{chatName}</Text>
+            <Text style={[styles.headerTitle, { color: primaryColor }]} numberOfLines={1}>{chatName}</Text>
             <Text style={[styles.onlineText]}>Active Now</Text>
           </View>
           <TouchableOpacity style={styles.iconButton}>
-            <MoreVertical size={moderateScale(24)} color="#4B5563" />
+            <MoreVertical size={moderateScale(24)} color={textSecondaryColor} />
           </TouchableOpacity>
         </View>
 
@@ -127,8 +136,8 @@ export default function ChatLoginScreen() {
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
-          <View style={styles.dateSeparator}>
-            <Text style={styles.dateText}>ACCOUNT LOGIN</Text>
+          <View style={[styles.dateSeparator, { backgroundColor: borderColor }]}>
+            <Text style={[styles.dateText, { color: textSecondaryColor }]}>ACCOUNT LOGIN</Text>
           </View>
 
           {messages.map((msg) => {
@@ -136,13 +145,13 @@ export default function ChatLoginScreen() {
               return (
                 <View key={msg.id} style={styles.groupMessageRowRight}>
                   <View style={styles.groupMsgContentColRight}>
-                    <Text style={styles.groupSenderNameRight}>{msg.sender}</Text>
-                    <View style={styles.bubbleRightGroup}>
+                    <Text style={[styles.groupSenderNameRight, { color: primaryColor }]}>{msg.sender}</Text>
+                    <View style={[styles.bubbleRightGroup, { backgroundColor: primaryColor }]}>
                       <Text style={styles.messageTextRight}>{msg.text}</Text>
                     </View>
                     <View style={styles.timeStatusContainerRight}>
-                      <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                      <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
+                      <Text style={[styles.groupTimeLabelRight, { color: textSecondaryColor }]}>{msg.time}</Text>
+                      <CheckCheck size={moderateScale(14)} color={primaryColor} style={{ marginLeft: 4 }} />
                     </View>
                   </View>
                 </View>
@@ -152,13 +161,13 @@ export default function ChatLoginScreen() {
             return (
               <View key={msg.id} style={styles.messageGroupLeftConsult}>
                 <View style={styles.senderHeader}>
-                  <View style={styles.senderBadge}>
-                    <Text style={styles.senderBadgeText}>{msg.sender}</Text>
+                  <View style={[styles.senderBadge, { backgroundColor: borderColor }]}>
+                    <Text style={[styles.senderBadgeText, { color: textSecondaryColor }]}>{msg.sender}</Text>
                   </View>
-                  <Text style={styles.timeLabel}>{msg.time}</Text>
+                  <Text style={[styles.timeLabel, { color: textSecondaryColor }]}>{msg.time}</Text>
                 </View>
-                <View style={styles.bubbleLeft}>
-                  <Text style={styles.messageTextLeft}>{msg.text}</Text>
+                <View style={[styles.bubbleLeft, { backgroundColor: cardColor, borderColor }]}>
+                  <Text style={[styles.messageTextLeft, { color: textColor }]}>{msg.text}</Text>
                 </View>
               </View>
             );
@@ -166,19 +175,19 @@ export default function ChatLoginScreen() {
         </ScrollView>
 
         {/* Input Area */}
-        <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
-          <View style={styles.inputWrapper}>
+        <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20), backgroundColor: cardColor, borderTopColor: borderColor }]}>
+          <View style={[styles.inputWrapper, { backgroundColor: backgroundColor, borderColor }]}>
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, { color: textColor }]}
               placeholder="Type your response..."
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={textSecondaryColor}
               value={inputText}
               onChangeText={setInputText}
               onSubmitEditing={handleSend}
               autoFocus
               secureTextEntry={messages.length === 3}
             />
-            <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+            <TouchableOpacity style={[styles.sendButton, { backgroundColor: primaryColor }]} onPress={handleSend}>
               <Send size={moderateScale(16)} color="#FFFFFF" strokeWidth={2.5} />
             </TouchableOpacity>
           </View>
@@ -194,9 +203,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: moderateScale(10),
-    backgroundColor: Colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
     zIndex: 10,
   },
   backButton: {
@@ -220,7 +227,6 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(5),
     backgroundColor: '#10B981',
     borderWidth: 1.5,
-    borderColor: Colors.white,
   },
   headerTitleContainer: {
     flex: 1,
@@ -229,7 +235,6 @@ const styles = ScaledSheet.create({
   headerTitle: {
     fontSize: moderateScale(16),
     fontWeight: '700',
-    color: '#0059B2',
   },
   onlineText: {
     fontSize: moderateScale(12),
@@ -250,7 +255,6 @@ const styles = ScaledSheet.create({
   },
   dateSeparator: {
     alignSelf: 'center',
-    backgroundColor: '#F3F4F6',
     paddingHorizontal: moderateScale(16),
     paddingVertical: moderateScale(6),
     borderRadius: moderateScale(16),
@@ -259,7 +263,6 @@ const styles = ScaledSheet.create({
   dateText: {
     fontSize: moderateScale(11),
     fontWeight: '700',
-    color: '#6B7280',
     letterSpacing: 0.5,
   },
   messageGroupLeftConsult: {
@@ -273,7 +276,6 @@ const styles = ScaledSheet.create({
     marginBottom: moderateScale(6),
   },
   senderBadge: {
-    backgroundColor: '#E5E7EB',
     paddingHorizontal: moderateScale(8),
     paddingVertical: moderateScale(2),
     borderRadius: moderateScale(4),
@@ -282,15 +284,12 @@ const styles = ScaledSheet.create({
   senderBadgeText: {
     fontSize: moderateScale(10),
     fontWeight: '700',
-    color: '#4B5563',
   },
   timeLabel: {
     fontSize: moderateScale(10),
     fontWeight: '600',
-    color: '#9CA3AF',
   },
   bubbleLeft: {
-    backgroundColor: Colors.white,
     padding: moderateScale(14),
     borderTopLeftRadius: 0,
     borderTopRightRadius: moderateScale(16),
@@ -302,11 +301,9 @@ const styles = ScaledSheet.create({
     shadowRadius: 2,
     elevation: 1,
     borderWidth: 1,
-    borderColor: '#F3F4F6',
   },
   messageTextLeft: {
     fontSize: moderateScale(15),
-    color: '#374151',
     lineHeight: moderateScale(22),
   },
   groupMessageRowRight: {
@@ -321,12 +318,10 @@ const styles = ScaledSheet.create({
   groupSenderNameRight: {
     fontSize: moderateScale(12),
     fontWeight: '700',
-    color: '#0059B2',
     marginBottom: moderateScale(4),
     marginRight: moderateScale(4),
   },
   bubbleRightGroup: {
-    backgroundColor: '#0059B2',
     padding: moderateScale(16),
     borderRadius: moderateScale(20),
     borderTopRightRadius: moderateScale(4),
@@ -345,23 +340,18 @@ const styles = ScaledSheet.create({
   },
   groupTimeLabelRight: {
     fontSize: moderateScale(10),
-    color: '#9CA3AF',
     fontWeight: '500',
   },
   inputContainer: {
-    backgroundColor: Colors.white,
     paddingHorizontal: Spacing.md,
     paddingTop: moderateScale(12),
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
     borderRadius: moderateScale(40),
     borderWidth: 1,
-    borderColor: '#E5E7EB',
     paddingHorizontal: moderateScale(12),
     paddingVertical: moderateScale(8),
   },
@@ -370,14 +360,12 @@ const styles = ScaledSheet.create({
     minHeight: moderateScale(40),
     maxHeight: moderateScale(100),
     fontSize: moderateScale(15),
-    color: '#1F2937',
     paddingHorizontal: moderateScale(8),
   },
   sendButton: {
     width: moderateScale(40),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
-    backgroundColor: '#0059B2',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: moderateScale(8),

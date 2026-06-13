@@ -14,6 +14,7 @@ import { useRouter, Stack } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '@/app/shared/constants/Theme';
+import { useThemeColor } from '../shared/hooks/useThemeColor';
 
 // Icons
 import { ArrowLeft } from 'iconsax-react-native';
@@ -160,8 +161,16 @@ export default function SignupScreen() {
   const currentProgress = ((currentStepIndex + 1) / SIGNUP_STEPS.length) * 100;
   const currentStepNum = SIGNUP_STEPS[currentStepIndex].step;
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+  //const tintColor = useThemeColor({}, 'tint');
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -170,9 +179,9 @@ export default function SignupScreen() {
         <Stack.Screen options={{ headerShown: false }} />
 
         {/* Header */}
-        <View style={styles.headerContainer}>
+        <View style={[styles.headerContainer, { backgroundColor: cardColor, borderBottomColor: borderColor }]}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
+            <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
           </TouchableOpacity>
 
           <View style={styles.avatarContainer}>
@@ -180,11 +189,11 @@ export default function SignupScreen() {
               source={require('@/assets/images/Healthstack.png')}
               style={styles.headerAvatar}
             />
-            <View style={styles.onlineDot} />
+            <View style={[styles.onlineDot, { borderColor: cardColor }]} />
           </View>
 
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle} numberOfLines={1}>Healthstack Copilot</Text>
+            <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>Healthstack Copilot</Text>
             <View style={styles.statusRow}>
               <View style={styles.statusInner}>
                 <Text style={styles.onlineText}>Active Now</Text>
@@ -195,13 +204,13 @@ export default function SignupScreen() {
           </View>
 
           <TouchableOpacity style={styles.iconButton}>
-            <MoreVertical size={moderateScale(22)} color="#4B5563" />
+            <MoreVertical size={moderateScale(22)} color={textSecondaryColor} />
           </TouchableOpacity>
         </View>
 
         {/* Progress Bar */}
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${currentProgress}%` }]} />
+          <View style={[styles.progressFill, { width: `${currentProgress}%`, backgroundColor: primaryColor }]} />
         </View>
 
         <ScrollView
@@ -211,12 +220,12 @@ export default function SignupScreen() {
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
-          <View style={styles.welcomeBanner}>
-            <View style={styles.welcomeIconCircle}>
-              <ShieldCheck size={moderateScale(32)} color="#0059B2" />
+          <View style={[styles.welcomeBanner, { backgroundColor: cardColor, borderColor }]}>
+            <View style={[styles.welcomeIconCircle, { backgroundColor: primaryColor + '20' }]}>
+              <ShieldCheck size={moderateScale(32)} color={primaryColor} />
             </View>
-            <Text style={styles.welcomeTitle}>Create Organization</Text>
-            <Text style={styles.welcomeSubtitle}>Complete these 3 steps to launch your digital clinical workspace.</Text>
+            <Text style={[styles.welcomeTitle, { color: textColor }]}>Create Organization</Text>
+            <Text style={[styles.welcomeSubtitle, { color: textSecondaryColor }]}>Complete these 3 steps to launch your digital clinical workspace.</Text>
           </View>
 
           {messages.map((msg, index) => {
@@ -224,12 +233,12 @@ export default function SignupScreen() {
               return (
                 <View key={msg.id} style={styles.groupMessageRowRight}>
                   <View style={styles.groupMsgContentColRight}>
-                    <View style={styles.bubbleRightGroup}>
+                    <View style={[styles.bubbleRightGroup, { backgroundColor: primaryColor }]}>
                       <Text style={styles.messageTextRight}>{msg.text}</Text>
                     </View>
                     <View style={styles.timeStatusContainerRight}>
-                      <Text style={styles.groupTimeLabelRight}>{msg.time}</Text>
-                      <CheckCheck size={moderateScale(14)} color="#1D4ED8" style={{ marginLeft: 4 }} />
+                      <Text style={[styles.groupTimeLabelRight, { color: textSecondaryColor }]}>{msg.time}</Text>
+                      <CheckCheck size={moderateScale(14)} color={primaryColor} style={{ marginLeft: 4 }} />
                     </View>
                   </View>
                 </View>
@@ -240,29 +249,29 @@ export default function SignupScreen() {
               <View key={msg.id} style={styles.messageGroupLeft}>
                 {msg.stepChange && (
                   <View style={styles.stepTransition}>
-                    <View style={styles.stepLine} />
-                    <View style={styles.stepLabelContainer}>
+                    <View style={[styles.stepLine, { backgroundColor: borderColor }]} />
+                    <View style={[styles.stepLabelContainer, { backgroundColor: backgroundColor, borderColor }]}>
                       {msg.stepChange === 2 ? (
-                        <MapPin size={12} color="#6B7280" style={{ marginRight: 4 }} />
+                        <MapPin size={12} color={textSecondaryColor} style={{ marginRight: 4 }} />
                       ) : (
-                        <User size={12} color="#6B7280" style={{ marginRight: 4 }} />
+                        <User size={12} color={textSecondaryColor} style={{ marginRight: 4 }} />
                       )}
-                      <Text style={styles.stepLabelText}>
+                      <Text style={[styles.stepLabelText, { color: textSecondaryColor }]}>
                         {msg.stepChange === 2 ? "STEP 2: OFFICIAL ADDRESS" : "STEP 3: ADMIN DETAILS"}
                       </Text>
                     </View>
-                    <View style={styles.stepLine} />
+                    <View style={[styles.stepLine, { backgroundColor: borderColor }]} />
                   </View>
                 )}
 
                 <View style={styles.senderHeader}>
-                  <View style={styles.senderBadge}>
-                    <Text style={styles.senderBadgeText}>COPILOT</Text>
+                  <View style={[styles.senderBadge, { backgroundColor: borderColor }]}>
+                    <Text style={[styles.senderBadgeText, { color: textSecondaryColor }]}>COPILOT</Text>
                   </View>
-                  <Text style={styles.timeLabel}>{msg.time}</Text>
+                  <Text style={[styles.timeLabel, { color: textSecondaryColor }]}>{msg.time}</Text>
                 </View>
-                <View style={styles.bubbleLeft}>
-                  <Text style={styles.messageTextLeft}>{msg.text}</Text>
+                <View style={[styles.bubbleLeft, { backgroundColor: cardColor, borderColor }]}>
+                  <Text style={[styles.messageTextLeft, { color: textColor }]}>{msg.text}</Text>
                 </View>
               </View>
             );
@@ -270,18 +279,18 @@ export default function SignupScreen() {
 
           {isTyping && (
             <View style={styles.typingContainer}>
-              <View style={styles.bubbleLeftTyping}>
-                <ActivityIndicator size="small" color="#0059B2" />
+              <View style={[styles.bubbleLeftTyping, { backgroundColor: borderColor }]}>
+                <ActivityIndicator size="small" color={primaryColor} />
               </View>
             </View>
           )}
         </ScrollView>
 
         {/* Input Area */}
-        <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20) }]}>
-          <View style={styles.inputWrapper}>
+        <View style={[styles.inputContainer, { paddingBottom: insets.bottom || moderateScale(20), backgroundColor: cardColor, borderTopColor: borderColor }]}>
+          <View style={[styles.inputWrapper, { backgroundColor: backgroundColor, borderColor }]}>
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, { color: textColor }]}
               placeholder={SIGNUP_STEPS[currentStepIndex].label + "..."}
               placeholderTextColor="#9CA3AF"
               value={inputText}
@@ -292,7 +301,7 @@ export default function SignupScreen() {
               returnKeyType="send"
             />
             <TouchableOpacity
-              style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
+              style={[styles.sendButton, { backgroundColor: primaryColor }, !inputText.trim() && { backgroundColor: borderColor }]}
               onPress={handleSend}
               disabled={!inputText.trim() || isTyping}
             >
@@ -316,8 +325,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: moderateScale(10),
-    backgroundColor: Colors.white,
     zIndex: 10,
+    borderBottomWidth: 1,
   },
   backButton: {
     marginRight: Spacing.sm,
@@ -330,7 +339,6 @@ const styles = ScaledSheet.create({
     width: moderateScale(42),
     height: moderateScale(42),
     borderRadius: moderateScale(21),
-    backgroundColor: '#F3F4F6',
   },
   onlineDot: {
     position: 'absolute',
@@ -341,7 +349,6 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(5),
     backgroundColor: '#10B981',
     borderWidth: 2,
-    borderColor: Colors.white,
   },
   headerTitleContainer: {
     flex: 1,
@@ -350,7 +357,6 @@ const styles = ScaledSheet.create({
   headerTitle: {
     fontSize: moderateScale(17),
     fontWeight: '800',
-    color: '#111827',
   },
   statusRow: {
     flexDirection: 'row',
@@ -388,7 +394,6 @@ const styles = ScaledSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#0059B2',
   },
   chatArea: {
     flex: 1,
@@ -400,11 +405,9 @@ const styles = ScaledSheet.create({
   welcomeBanner: {
     alignItems: 'center',
     paddingVertical: moderateScale(30),
-    backgroundColor: Colors.white,
     borderRadius: moderateScale(24),
     marginBottom: moderateScale(24),
     borderWidth: 1,
-    borderColor: '#F3F4F6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
@@ -415,7 +418,6 @@ const styles = ScaledSheet.create({
     width: moderateScale(64),
     height: moderateScale(64),
     borderRadius: moderateScale(32),
-    backgroundColor: '#EBF5FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: moderateScale(16),
@@ -423,12 +425,10 @@ const styles = ScaledSheet.create({
   welcomeTitle: {
     fontSize: moderateScale(20),
     fontWeight: '800',
-    color: '#111827',
     marginBottom: moderateScale(4),
   },
   welcomeSubtitle: {
     fontSize: moderateScale(13),
-    color: '#6B7280',
     textAlign: 'center',
     paddingHorizontal: moderateScale(30),
     lineHeight: moderateScale(18),
@@ -448,7 +448,6 @@ const styles = ScaledSheet.create({
   stepLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E7EB',
   },
   stepLabelContainer: {
     flexDirection: 'row',
@@ -456,14 +455,11 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(12),
     paddingVertical: moderateScale(4),
     borderRadius: moderateScale(12),
-    backgroundColor: '#F9FAFB',
     borderWidth: 1,
-    borderColor: '#F3F4F6',
   },
   stepLabelText: {
     fontSize: moderateScale(10),
     fontWeight: '800',
-    color: '#6B7280',
     letterSpacing: 0.5,
   },
   senderHeader: {
@@ -472,7 +468,6 @@ const styles = ScaledSheet.create({
     marginBottom: moderateScale(6),
   },
   senderBadge: {
-    backgroundColor: '#F3F4F6',
     paddingHorizontal: moderateScale(8),
     paddingVertical: moderateScale(2),
     borderRadius: moderateScale(4),
@@ -481,16 +476,13 @@ const styles = ScaledSheet.create({
   senderBadgeText: {
     fontSize: moderateScale(10),
     fontWeight: '800',
-    color: '#4B5563',
     letterSpacing: 0.5,
   },
   timeLabel: {
     fontSize: moderateScale(10),
     fontWeight: '500',
-    color: '#9CA3AF',
   },
   bubbleLeft: {
-    backgroundColor: Colors.white,
     padding: moderateScale(16),
     borderTopLeftRadius: 0,
     borderTopRightRadius: moderateScale(18),
@@ -502,11 +494,9 @@ const styles = ScaledSheet.create({
     shadowRadius: 4,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
   },
   messageTextLeft: {
     fontSize: moderateScale(15),
-    color: '#334155',
     lineHeight: moderateScale(22),
     fontWeight: '500',
   },
@@ -520,7 +510,6 @@ const styles = ScaledSheet.create({
     alignItems: 'flex-end',
   },
   bubbleRightGroup: {
-    backgroundColor: '#0059B2',
     padding: moderateScale(16),
     borderRadius: moderateScale(18),
     borderTopRightRadius: moderateScale(4),
@@ -545,14 +534,12 @@ const styles = ScaledSheet.create({
   },
   groupTimeLabelRight: {
     fontSize: moderateScale(10),
-    color: '#9CA3AF',
     fontWeight: '500',
   },
   typingContainer: {
     marginBottom: moderateScale(20),
   },
   bubbleLeftTyping: {
-    backgroundColor: '#F3F4F6',
     padding: moderateScale(12),
     borderRadius: moderateScale(16),
     alignSelf: 'flex-start',
@@ -561,19 +548,15 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   inputContainer: {
-    backgroundColor: Colors.white,
     paddingHorizontal: Spacing.md,
     paddingTop: moderateScale(16),
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
     borderRadius: moderateScale(30),
     borderWidth: 1.5,
-    borderColor: '#F1F5F9',
     paddingHorizontal: moderateScale(14),
     paddingVertical: moderateScale(4),
   },
@@ -581,19 +564,16 @@ const styles = ScaledSheet.create({
     flex: 1,
     minHeight: moderateScale(48),
     fontSize: moderateScale(15),
-    color: '#1F2937',
     fontWeight: '500',
   },
   sendButton: {
     width: moderateScale(40),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
-    backgroundColor: '#0059B2',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: moderateScale(8),
   },
   sendButtonDisabled: {
-    backgroundColor: '#E5E7EB',
   },
 });
