@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors } from '@/app/shared/constants/Theme';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface CustomButtonProps {
   title: string;
@@ -31,29 +32,35 @@ const Button: React.FC<CustomButtonProps> = ({
   style,
   textStyle
 }) => {
+  const primaryColor = useThemeColor({}, 'primary');
+  const primaryLightColor = useThemeColor({}, 'primaryLight');
+  const borderColor = useThemeColor({}, 'border');
+  const whiteColor = useThemeColor({}, 'white');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+
   const getButtonStyle = () => {
     switch (type) {
       case 'outline':
-        return styles.outlineButton;
+        return [styles.outlineButton, { borderColor }];
       case 'ghost':
         return styles.ghostButton;
       case 'secondary':
-        return styles.secondaryButton;
+        return [styles.secondaryButton, { backgroundColor: primaryLightColor }];
       default:
-        return styles.primaryButton;
+        return [styles.primaryButton, { backgroundColor: primaryColor }];
     }
   };
 
   const getTextStyle = () => {
     switch (type) {
       case 'outline':
-        return styles.outlineText;
+        return [styles.outlineText, { color: primaryColor }];
       case 'ghost':
-        return styles.ghostText;
+        return [styles.ghostText, { color: textSecondaryColor }];
       case 'secondary':
-        return styles.secondaryText;
+        return [styles.secondaryText, { color: primaryColor }];
       default:
-        return styles.primaryText;
+        return [styles.primaryText, { color: whiteColor }];
     }
   };
 
@@ -65,7 +72,7 @@ const Button: React.FC<CustomButtonProps> = ({
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator color={type === 'primary' ? 'white' : Colors.primary} />
+        <ActivityIndicator color={type === 'primary' ? whiteColor : primaryColor} />
       ) : (
         <>
           <Text style={[styles.baseText, getTextStyle(), textStyle]}>{title}</Text>
@@ -88,15 +95,12 @@ const styles: any = ScaledSheet.create({
     gap: '8@s',
   },
   primaryButton: {
-    backgroundColor: Colors.primary,
   },
   outlineButton: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
-    borderColor: Colors.border,
   },
   secondaryButton: {
-    backgroundColor: Colors.primaryLight,
   },
   ghostButton: {
     backgroundColor: 'transparent',
@@ -109,16 +113,12 @@ const styles: any = ScaledSheet.create({
     fontWeight: '600',
   },
   primaryText: {
-    color: Colors.white,
   },
   outlineText: {
-    color: Colors.primary,
   },
   secondaryText: {
-    color: Colors.primary,
   },
   ghostText: {
-    color: Colors.textSecondary,
   },
 });
 

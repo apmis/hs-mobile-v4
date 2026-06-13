@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, Text, TextInputProps, ViewStyle, StyleProp } from 'react-native';
 import { ScaledSheet } from 'react-native-size-matters';
 import { Colors } from '@/app/shared/constants/Theme';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -10,14 +11,18 @@ interface InputProps extends TextInputProps {
 }
 
 const Input: React.FC<InputProps> = ({ label, icon, containerStyle, ...props }) => {
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const textColor = useThemeColor({}, 'text');
+  const backgroundColor = useThemeColor({}, 'border'); // Using border or a dedicated lighter background
+
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputWrapper}>
+      {label && <Text style={[styles.label, { color: textSecondaryColor }]}>{label}</Text>}
+      <View style={[styles.inputWrapper, { backgroundColor }]}>
         {icon && <View style={styles.iconContainer}>{icon}</View>}
         <TextInput
-          style={styles.input}
-          placeholderTextColor={Colors.textSecondary}
+          style={[styles.input, { color: textColor }]}
+          placeholderTextColor={textSecondaryColor}
           {...props}
         />
       </View>
@@ -32,7 +37,6 @@ const styles: any = ScaledSheet.create({
   label: {
     fontSize: '12@ms',
     fontWeight: '700',
-    color: Colors.textSecondary,
     marginBottom: '8@vs',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -40,7 +44,6 @@ const styles: any = ScaledSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EFEFEF', // Matches the design's light gray background for inputs
     borderRadius: '12@ms',
     paddingHorizontal: '12@ms',
     height: '45@vs',
@@ -51,7 +54,6 @@ const styles: any = ScaledSheet.create({
   input: {
     flex: 1,
     fontSize: '15@ms',
-    color: Colors.text,
   },
 });
 

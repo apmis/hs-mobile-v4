@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Pressable, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Pressable, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '@/app/shared/constants/Theme';
-import { Bell, Camera, MoreVertical, Search, X } from 'lucide-react-native';
+import { Bell, Camera, MoreVertical, Search, X, Sparkles } from 'lucide-react-native';
 import { ArrowLeft } from 'iconsax-react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useThemeColor } from '../hooks/useThemeColor';
+import TopSearchBar from './TopSearchBar';
 
 const LOCATIONS = ['HQ Hospital:Lagos', 'North Wing: Abuja', 'East Wing: Port Harcourt', 'Pediatrics Center: Kano', 'Emergency Bay: Ibadan'];
 const DEFAULT_MORE_OPTIONS = ['Create', 'List', 'Find', 'View details', 'Edit', 'Delete'];
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface AppHeaderProps {
   title?: string;
+  subtitle?: string;
   showBack?: boolean;
   showIcons?: boolean;
   searchQuery?: string;
@@ -25,6 +29,7 @@ interface AppHeaderProps {
 
 export default function AppHeader({
   title = "HealthStack",
+  subtitle,
   showBack = false,
   showIcons = true,
   searchQuery,
@@ -41,20 +46,32 @@ export default function AppHeader({
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0]);
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+  const primaryLightColor = useThemeColor({}, 'primaryLight');
+  const errorColor = useThemeColor({}, 'errorText');
+
   return (
-    <View style={styles.mainHeader}>
+    <View style={[styles.mainHeader, { backgroundColor, borderBottomColor: borderColor, zIndex: 9999, elevation: 9999 }]}>
       <View style={styles.headerTitleRow}>
         <View style={styles.leftSection}>
           {showBack && (
             <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-              <ArrowLeft size={moderateScale(24)} color={Colors.text} variant="Linear" />
+              <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
             </TouchableOpacity>
           )}
           <View>
-            <Text style={styles.mainHeaderTitle}>{title}</Text>
+            <Text style={[styles.mainHeaderTitle, { color: textColor }]}>{title}</Text>
+            {subtitle && (
+              <Text style={[styles.locationText, { color: textSecondaryColor, marginTop: 2 }]}>{subtitle}</Text>
+            )}
             {showLocation && (
               <Pressable onPress={() => setShowLocationSheet(true)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Text style={styles.locationText}>@{selectedLocation}</Text>
+                <Text style={[styles.locationText, { color: textSecondaryColor }]}>@{selectedLocation}</Text>
               </Pressable>
             )}
           </View>
@@ -63,108 +80,92 @@ export default function AppHeader({
         {showIcons && (
           <View style={styles.headerRightIcons}>
             <TouchableOpacity style={styles.iconBtn}>
-              <Bell size={moderateScale(24)} color="#1F2937" />
+              <Bell size={moderateScale(24)} color={textColor} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn}>
-              <Camera size={moderateScale(24)} color="#1F2937" />
+              <Camera size={moderateScale(24)} color={textColor} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn} onPress={() => showMoreOptions ? setShowMoreMenu(true) : null}>
-              <MoreVertical size={moderateScale(24)} color="#1F2937" />
+              <MoreVertical size={moderateScale(24)} color={textColor} />
             </TouchableOpacity>
           </View>
         )}
       </View>
 
       {showSearch && setSearchQuery !== undefined && (
-        <View style={styles.searchBarContainer}>
-          <Search size={moderateScale(20)} color="#9CA3AF" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Ask Copilot"
-            placeholderTextColor="#9CA3AF"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          {searchQuery !== undefined && searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.closeSearchBtn}>
-              <X size={moderateScale(20)} color="#9CA3AF" />
-            </TouchableOpacity>
-          )}
-        </View>
+        <TopSearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       )}
 
       {/* Location Bottom Sheet */}
-      <Modal
-        visible={showLocationSheet}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowLocationSheet(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShowLocationSheet(false)}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.bottomSheet}>
-                <View style={styles.sheetIndicator} />
-                <Text style={styles.sheetTitle}>Select Location</Text>
+      {showLocationSheet && (
+        <View style={{ position: 'absolute', top: -insets.top, left: -Spacing.md, width: SCREEN_WIDTH, height: SCREEN_HEIGHT + 100, zIndex: 9999, elevation: 9999 }}>
+          <TouchableWithoutFeedback onPress={() => setShowLocationSheet(false)}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback>
+                <View style={[styles.bottomSheet, { backgroundColor: cardColor }]}>
+                  <View style={styles.sheetIndicator} />
+                  <Text style={[styles.sheetTitle, { color: textColor }]}>Select Location</Text>
 
-                {LOCATIONS.map((loc) => (
-                  <TouchableOpacity
-                    key={loc}
-                    style={[
-                      styles.locationItem,
-                      selectedLocation === loc && styles.locationItemActive
-                    ]}
-                    onPress={() => {
-                      setSelectedLocation(loc);
-                      setShowLocationSheet(false);
-                    }}
-                  >
-                    <Text style={[
-                      styles.locationItemText,
-                      selectedLocation === loc && styles.locationItemTextActive
-                    ]}>{loc}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+                  {LOCATIONS.map((loc) => (
+                    <TouchableOpacity
+                      key={loc}
+                      style={[
+                        styles.locationItem,
+                        { backgroundColor: backgroundColor },
+                        selectedLocation === loc && { backgroundColor: primaryLightColor, borderColor: primaryColor }
+                      ]}
+                      onPress={() => {
+                        setSelectedLocation(loc);
+                        setShowLocationSheet(false);
+                      }}
+                    >
+                      <Text style={[
+                        styles.locationItemText,
+                        { color: textColor },
+                        selectedLocation === loc && { color: primaryColor }
+                      ]}>{loc}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
 
       {/* Dropdown Menu Modal */}
-      <Modal
-        visible={showMoreMenu}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowMoreMenu(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShowMoreMenu(false)}>
-          <View style={styles.dropdownOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={[styles.dropdownMenu, { top: insets.top + moderateScale(45) }]}>
-                {moreOptions.map((option, index) => (
-                  <TouchableOpacity
-                    key={option}
-                    style={[
-                      styles.dropdownItem,
-                      index !== moreOptions.length - 1 && styles.dropdownItemBorder
-                    ]}
-                    onPress={() => {
-                      setShowMoreMenu(false);
-                      if (onOptionPress) onOptionPress(option);
-                    }}
-                  >
-                    <Text style={[
-                      styles.dropdownItemText,
-                      (option === 'Delete' || option === 'Logout') && styles.dropdownItemTextDanger
-                    ]}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      {showMoreMenu && (
+        <View style={{ position: 'absolute', top: -insets.top, left: -Spacing.md, width: SCREEN_WIDTH, height: SCREEN_HEIGHT + 100, zIndex: 9999, elevation: 9999 }}>
+          <TouchableWithoutFeedback onPress={() => setShowMoreMenu(false)}>
+            <View style={styles.dropdownOverlay}>
+              <TouchableWithoutFeedback>
+                <View style={[styles.dropdownMenu, { top: insets.top + moderateScale(45), backgroundColor: cardColor, borderColor }]}>
+                  {moreOptions.map((option, index) => (
+                    <TouchableOpacity
+                      key={option}
+                      style={[
+                        styles.dropdownItem,
+                        index !== moreOptions.length - 1 && [styles.dropdownItemBorder, { borderBottomColor: borderColor }]
+                      ]}
+                      onPress={() => {
+                        setShowMoreMenu(false);
+                        if (onOptionPress) onOptionPress(option);
+                      }}
+                    >
+                      <Text style={[
+                        styles.dropdownItemText,
+                        { color: textColor },
+                        option === title && { color: primaryColor, fontWeight: 'bold' },
+                        (option === 'Delete' || option === 'Logout') && { color: errorColor }
+                      ]}>{option}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
     </View>
   );
 }
@@ -175,8 +176,6 @@ const styles = ScaledSheet.create({
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    // backgroundColor: Colors.white,
   },
   headerTitleRow: {
     flexDirection: 'row',
@@ -195,7 +194,6 @@ const styles = ScaledSheet.create({
   mainHeaderTitle: {
     fontSize: moderateScale(20),
     fontWeight: '800',
-    color: '#1A1A1A',
   },
   headerRightIcons: {
     flexDirection: 'row',
@@ -205,28 +203,9 @@ const styles = ScaledSheet.create({
   iconBtn: {
     padding: moderateScale(4),
   },
-  searchBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: moderateScale(12),
-    paddingHorizontal: moderateScale(16),
-    height: moderateScale(48),
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: moderateScale(8),
-    fontSize: moderateScale(14),
-    color: Colors.text,
-  },
-  closeSearchBtn: {
-    padding: moderateScale(4),
-  },
+
   locationText: {
     fontSize: moderateScale(14),
-    color: Colors.textSecondary,
     fontWeight: '500',
   },
   modalOverlay: {
@@ -235,7 +214,6 @@ const styles = ScaledSheet.create({
     justifyContent: 'flex-end',
   },
   bottomSheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: moderateScale(24),
     borderTopRightRadius: moderateScale(24),
     paddingHorizontal: Spacing.md,
@@ -253,7 +231,6 @@ const styles = ScaledSheet.create({
   sheetTitle: {
     fontSize: moderateScale(18),
     fontWeight: '700',
-    color: '#1A1A1A',
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
@@ -262,30 +239,25 @@ const styles = ScaledSheet.create({
     paddingHorizontal: Spacing.md,
     borderRadius: moderateScale(12),
     marginBottom: moderateScale(8),
-    backgroundColor: '#F9FAFB',
     borderWidth: 1,
     borderColor: 'transparent',
   },
   locationItemActive: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#BFDBFE',
   },
   locationItemText: {
     fontSize: moderateScale(15),
     fontWeight: '500',
-    color: '#4B5563',
   },
   locationItemTextActive: {
-    color: '#1D4ED8',
     fontWeight: '600',
   },
   dropdownOverlay: {
     flex: 1,
+    top: moderateScale(-20),
   },
   dropdownMenu: {
     position: 'absolute',
     right: Spacing.md,
-    backgroundColor: Colors.white,
     borderRadius: moderateScale(12),
     width: moderateScale(160),
     shadowColor: '#000',
@@ -294,7 +266,6 @@ const styles = ScaledSheet.create({
     shadowRadius: 12,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#F3F4F6',
     zIndex: 100,
     overflow: 'hidden',
   },
@@ -304,14 +275,11 @@ const styles = ScaledSheet.create({
   },
   dropdownItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
   },
   dropdownItemText: {
     fontSize: moderateScale(14),
-    color: '#4B5563',
     fontWeight: '500',
   },
   dropdownItemTextDanger: {
-    color: '#EF4444',
   },
 });

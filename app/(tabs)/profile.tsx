@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
 import ProfileScreen from '../(features)/profile';
 
 
@@ -18,9 +19,10 @@ import ProfileScreen from '../(features)/profile';
 // import { Verify } from 'iconsax-react-native';
 
 export default function Profile() {
+  const backgroundColor = useThemeColor({}, 'background');
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <ProfileScreen
         styles={styles}
       />
@@ -31,7 +33,6 @@ export default function Profile() {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
   },
   scrollContent: {
     paddingHorizontal: moderateScale(20),

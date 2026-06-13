@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Search, X } from 'lucide-react-native';
 import { MessageText, Call } from 'iconsax-react-native';
 import { Colors, Typography, Spacing } from './shared/constants/Theme';
+import { useThemeColor } from './shared/hooks/useThemeColor';
 
 const STAFF_LIST = [
   { id: 'staff-0', name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', department: 'Cardiology', image: 'https://randomuser.me/api/portraits/women/44.jpg', isOnline: true },
@@ -31,30 +32,37 @@ export default function DirectoryScreen() {
     staff.department.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, backgroundColor }]}>
       {/* Header */}
-      <View style={styles.headerContainer}>
+      <View style={[styles.headerContainer, { backgroundColor }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={moderateScale(24)} color={Colors.text} />
+          <ArrowLeft size={moderateScale(24)} color={textColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Staff Directory</Text>
+        <Text style={[styles.headerTitle, { color: textColor }]}>Staff Directory</Text>
       </View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Search size={moderateScale(20)} color="#9CA3AF" />
+        <View style={[styles.searchBar, { backgroundColor: cardColor, borderColor }]}>
+          <Search size={moderateScale(20)} color={textSecondaryColor} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: textColor }]}
             placeholder="Search by name, specialty, or dept..."
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={textSecondaryColor}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <X size={moderateScale(20)} color="#9CA3AF" />
+              <X size={moderateScale(20)} color={textSecondaryColor} />
             </TouchableOpacity>
           )}
         </View>
@@ -65,7 +73,7 @@ export default function DirectoryScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.resultHeader}>
-          <Text style={styles.resultCount}>
+          <Text style={[styles.resultCount, { color: textSecondaryColor }]}>
             {filteredStaff.length} {filteredStaff.length === 1 ? 'member' : 'members'} found
           </Text>
         </View>
@@ -73,7 +81,7 @@ export default function DirectoryScreen() {
         {filteredStaff.map((staff, idx) => (
           <TouchableOpacity
             key={idx}
-            style={styles.staffCard}
+            style={[styles.staffCard, { backgroundColor: cardColor, borderColor }]}
             activeOpacity={0.8}
             onPress={() => router.push({
               pathname: `/chat/${staff.id}`,
@@ -83,30 +91,30 @@ export default function DirectoryScreen() {
             <View style={styles.staffMain}>
               <View style={styles.avatarContainer}>
                 <Image source={{ uri: staff.image }} style={styles.avatarImg} />
-                {staff.isOnline && <View style={styles.onlineDot} />}
+                {staff.isOnline && <View style={[styles.onlineDot, { borderColor: cardColor }]} />}
               </View>
 
               <View style={styles.staffInfo}>
-                <Text style={styles.staffName} numberOfLines={1}>{staff.name}</Text>
-                <Text style={styles.staffSpecialty}>{staff.specialty}</Text>
+                <Text style={[styles.staffName, { color: textColor }]} numberOfLines={1}>{staff.name}</Text>
+                <Text style={[styles.staffSpecialty, { color: textSecondaryColor }]}>{staff.specialty}</Text>
               </View>
             </View>
 
-            <View style={styles.actionsRow}>
-              <View style={styles.departmentBadge}>
-                <Text style={styles.departmentText}>{staff.department}</Text>
+            <View style={[styles.actionsRow, { borderTopColor: borderColor }]}>
+              <View style={[styles.departmentBadge, { backgroundColor: borderColor }]}>
+                <Text style={[styles.departmentText, { color: textSecondaryColor }]}>{staff.department}</Text>
               </View>
               <View style={styles.actionButtons}>
-                <TouchableOpacity style={styles.iconCircle}>
-                  <Call size={moderateScale(18)} color="#6B7280" variant="Bold" />
+                <TouchableOpacity style={[styles.iconCircle, { backgroundColor: borderColor }]}>
+                  <Call size={moderateScale(18)} color={textSecondaryColor} variant="Bold" />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.iconCircle, { backgroundColor: '#E0E7FF' }]}
+                <TouchableOpacity style={[styles.iconCircle, { backgroundColor: primaryColor + '20' }]}
                   onPress={() => router.push({
                     pathname: `/chat/${staff.id}`,
                     params: { fallbackName: staff.name, fallbackAvatar: staff.image }
                   })}
                 >
-                  <MessageText size={moderateScale(18)} color="#0059B2" variant="Bold" />
+                  <MessageText size={moderateScale(18)} color={primaryColor} variant="Bold" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -115,7 +123,7 @@ export default function DirectoryScreen() {
 
         {filteredStaff.length === 0 && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No staff members match your search.</Text>
+            <Text style={[styles.emptyText, { color: textSecondaryColor }]}>No staff members match your search.</Text>
           </View>
         )}
       </ScrollView>

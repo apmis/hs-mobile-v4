@@ -1,0 +1,225 @@
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
+import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors, Spacing } from '@/app/shared/constants/Theme';
+import { Link2, Phone, PhoneMissed, PhoneIncoming, PhoneOutgoing, Video } from 'lucide-react-native';
+import { useThemeColor } from '../shared/hooks/useThemeColor';
+import { ThemedView } from '../shared/components/ui/ThemedView';
+import { ThemedText } from '../shared/components/ui/ThemedText';
+
+const CALLS_DATA = [
+  {
+    id: '1',
+    name: 'Alex Rivera',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    type: 'missed',
+    isVideo: false,
+    date: 'Today, 10:45 AM',
+    count: 2
+  },
+  {
+    id: '2',
+    name: 'Surgical Team',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    type: 'outgoing',
+    isVideo: true,
+    date: 'Yesterday, 4:20 PM'
+  },
+  {
+    id: '3',
+    name: 'Dr. Sarah Jenkins',
+    avatar: 'https://images.unsplash.com/photo-1594824432433-2ba7d4c9d5ec?q=80&w=200&auto=format&fit=crop',
+    type: 'incoming',
+    isVideo: true,
+    date: 'Yesterday, 1:15 PM'
+  },
+  {
+    id: '4',
+    name: 'Marcus Chen, RN',
+    avatar: 'https://randomuser.me/api/portraits/men/46.jpg',
+    type: 'incoming',
+    isVideo: false,
+    date: 'Monday, 9:00 AM'
+  },
+  {
+    id: '5',
+    name: 'Oncology Research',
+    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
+    type: 'missed',
+    isVideo: true,
+    date: 'Sunday, 11:30 AM'
+  }
+];
+
+export default function CallsScreen() {
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const borderColor = useThemeColor({}, 'border');
+  const primaryColor = useThemeColor({}, 'primary');
+
+  return (
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+      <View style={styles.header}>
+        <ThemedText type="h1">Calls</ThemedText>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+        {/* Create Call Link */}
+        <TouchableOpacity style={[styles.createLinkCard, { backgroundColor: cardColor, borderColor }]} activeOpacity={0.7}>
+          <View style={[styles.linkIconContainer, { backgroundColor: primaryColor }]}>
+            <Link2 size={moderateScale(20)} color="#FFFFFF" strokeWidth={2.5} />
+          </View>
+          <View style={styles.linkTextContainer}>
+            <Text style={[styles.linkTitle, { color: primaryColor }]}>Create call link</Text>
+            <Text style={[styles.linkSubtitle, { color: textSecondaryColor }]}>Share a link for your Stack call</Text>
+          </View>
+        </TouchableOpacity>
+
+        <ThemedText type="subtitle" style={styles.sectionTitle}>Recent</ThemedText>
+
+        <View style={[styles.callsCard, { backgroundColor: cardColor, borderColor }]}>
+          {CALLS_DATA.map((call, idx) => {
+            const isMissed = call.type === 'missed';
+            return (
+              <View key={call.id}>
+                <TouchableOpacity style={styles.callRow} activeOpacity={0.7}>
+                  <Image source={{ uri: call.avatar }} style={styles.avatar} />
+
+                  <View style={styles.callDetails}>
+                    <Text style={[styles.callerName, { color: textColor }, isMissed && styles.missedName]} numberOfLines={1}>
+                      {call.name} {call.count ? `(${call.count})` : ''}
+                    </Text>
+                    <View style={styles.callMetaRow}>
+                      {call.type === 'missed' ? (
+                        <PhoneMissed size={moderateScale(14)} color="#DC2626" />
+                      ) : call.type === 'incoming' ? (
+                        <PhoneIncoming size={moderateScale(14)} color="#059669" />
+                      ) : (
+                        <PhoneOutgoing size={moderateScale(14)} color={textSecondaryColor} />
+                      )}
+                      <Text style={[styles.timeText, { color: textSecondaryColor }]}>{call.date}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.actionIcons}>
+                    <TouchableOpacity style={styles.iconBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                      {call.isVideo ? (
+                        <Video size={moderateScale(22)} color={Colors.primary} />
+                      ) : (
+                        <Phone size={moderateScale(20)} color={Colors.primary} />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+
+                {idx !== CALLS_DATA.length - 1 && <View style={[styles.divider, { backgroundColor: borderColor }]} />}
+              </View>
+            );
+          })}
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = ScaledSheet.create({
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  header: {
+    paddingHorizontal: moderateScale(20),
+    paddingBottom: '14@vs',
+    marginBottom: '8@vs',
+  },
+  title: {
+  },
+  scrollContent: {
+    paddingHorizontal: moderateScale(20),
+    paddingBottom: Spacing.xl * 2,
+  },
+  createLinkCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: moderateScale(16),
+    borderRadius: moderateScale(16),
+    marginBottom: moderateScale(24),
+    borderWidth: 1,
+  },
+  linkIconContainer: {
+    width: moderateScale(44),
+    height: moderateScale(44),
+    borderRadius: moderateScale(22),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: moderateScale(16),
+  },
+  linkTextContainer: {
+    flex: 1,
+  },
+  linkTitle: {
+    fontSize: moderateScale(16),
+    fontWeight: '700',
+    marginBottom: moderateScale(2),
+  },
+  linkSubtitle: {
+    fontSize: moderateScale(13),
+  },
+  sectionTitle: {
+    marginBottom: moderateScale(12),
+    marginLeft: moderateScale(4),
+  },
+  callsCard: {
+    borderRadius: moderateScale(16),
+    paddingHorizontal: moderateScale(16),
+    borderWidth: 1,
+  },
+  callRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: moderateScale(14),
+  },
+  avatar: {
+    width: moderateScale(48),
+    height: moderateScale(48),
+    borderRadius: moderateScale(24),
+    marginRight: moderateScale(14),
+  },
+  callDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  callerName: {
+    fontSize: moderateScale(16),
+    fontWeight: '700',
+    marginBottom: moderateScale(4),
+  },
+  missedName: {
+    color: '#DC2626',
+  },
+  callMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeText: {
+    fontSize: moderateScale(13),
+    marginLeft: moderateScale(6),
+  },
+  actionIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: moderateScale(12),
+  },
+  iconBtn: {
+    padding: moderateScale(4),
+  },
+  divider: {
+    height: 1,
+    marginLeft: moderateScale(62),
+  }
+});
