@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,13 +16,52 @@ import { Colors, Typography } from '@/app/shared/constants/Theme';
 import Button from '@/app/shared/components/ui/Button';
 import Input from '@/app/shared/components/ui/Input';
 import { useThemeColor } from '../shared/hooks/useThemeColor';
+import { useLogin } from '@/app/shared/api/auth';
+import Toast from 'react-native-toast-message';
+import { loginSchema } from '@/app/shared/utils/validators';
+import { z } from 'zod';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ email?: string[]; password?: string[] }>({});
+  const loginMutation = useLogin();
+
+  // Inline validation as the user types
+  useEffect(() => {
+    // Don't validate if they haven't typed anything yet and no errors exist
+    if (!email && !password && Object.keys(errors).length === 0) return;
+
+    const result = loginSchema.safeParse({ email, password });
+    if (!result.success) {
+      setErrors(z.flattenError(result.error).fieldErrors);
+    } else {
+      setErrors({});
+    }
+  }, [email, password]);
 
   const handleSignIn = () => {
-    // Navigate to the tabs dashboard
-    router.replace('/(tabs)');
+    const result = loginSchema.safeParse({ email, password });
+
+    if (!result.success) {
+      setErrors(z.flattenError(result.error).fieldErrors);
+      // Optional: still show a generic toast if desired, but inline errors handle the specifics
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please fix the errors below.',
+      });
+      return;
+    }
+
+
+    loginMutation.mutate({
+      strategy: 'local',
+      email,
+      password
+    });
+
   };
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -54,6 +93,9 @@ export default function LoginScreen() {
             icon={<Mail size={20} color={textSecondaryColor} />}
             autoCapitalize="none"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            error={errors.email?.[0]}
           />
 
           <View style={styles.passwordHeader}>
@@ -66,6 +108,9 @@ export default function LoginScreen() {
             placeholder="••••••••••••"
             secureTextEntry
             icon={<Lock size={20} color={textSecondaryColor} />}
+            value={password}
+            onChangeText={setPassword}
+            error={errors.password?.[0]}
           />
 
           <View style={styles.rememberRow}>
@@ -76,7 +121,8 @@ export default function LoginScreen() {
           <Button
             title="Sign In"
             onPress={handleSignIn}
-            icon={<ArrowRight size={20} color={whiteColor} />}
+            loading={loginMutation.isPending}
+            icon={!loginMutation.isPending ? <ArrowRight size={20} color={whiteColor} /> : undefined}
             style={styles.signInButton}
           />
           <TouchableOpacity

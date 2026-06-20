@@ -8,7 +8,7 @@ import {
   StyleProp
 } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors } from '@/app/shared/constants/Theme';
+//import { Colors } from '@/app/shared/constants/Theme';
 import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface CustomButtonProps {
