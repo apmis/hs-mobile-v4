@@ -1,1 +1,3 @@
 nodeLinker: hoisted
+patchedDependencies:
+  '@feathersjs/feathers@4.5.19': patches/@feathersjs__feathers@4.5.19.patch

@@ -1,0 +1,20 @@
+diff --git a/lib/hooks/index.js b/lib/hooks/index.js
+index e1db2eb6f6e9b0611332b4086e6c8321e460c03d..4a7d60a9634b851a027c71b01ce28f479c5e78f0 100644
+--- a/lib/hooks/index.js
++++ b/lib/hooks/index.js
+@@ -158,10 +158,14 @@ const hookMixin = exports.hookMixin = function hookMixin (service) {
+       return mixin;
+     }
+ 
++    const originalMethod = service[method];
++
+     mixin[method] = function () {
+       const service = this;
+       const args = Array.from(arguments);
+-      const original = service._super.bind(service);
++      const original = (typeof service._super === 'function') 
++        ? service._super.bind(service) 
++        : originalMethod.bind(service);
+ 
+       return withHooks({
+         app,
