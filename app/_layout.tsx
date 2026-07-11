@@ -18,11 +18,6 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const theme = useActiveTheme();
 
-  useEffect(() => {
-    // Hide splash screen immediately as we are using system fonts
-    SplashScreen.hideAsync();
-  }, []);
-
   const backgroundColor = theme === 'dark' ? DarkColors.background : Colors.background;
 
   return (

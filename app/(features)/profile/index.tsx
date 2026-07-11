@@ -119,7 +119,7 @@ const ProfileScreen = ({ styles }: ProfileScreenProps) => {
                                 <PreferenceItem
                                     title="Notifications"
                                     subtitle="Alerts, updates & health reports"
-                                    icon={<Bell size={moderateScale(20)} color="#2563EB" />}
+                                    icon={<Bell size={moderateScale(20)} color={textSecondaryColor} />}
                                     iconBgColor="rgba(37, 99, 235, 0.1)"
                                     onPress={() => router.push('/(features)/notifications')}
                                     styles={styles}
@@ -130,7 +130,7 @@ const ProfileScreen = ({ styles }: ProfileScreenProps) => {
                                 <PreferenceItem
                                     title="Privacy & Security"
                                     subtitle="HIPAA compliance & data access"
-                                    icon={<Lock size={moderateScale(20)} color="#059669" />}
+                                    icon={<Lock size={moderateScale(20)} color={textSecondaryColor} />}
                                     iconBgColor="rgba(5, 150, 105, 0.1)"
                                     styles={styles}
                                     textColor={textColor}
@@ -140,7 +140,7 @@ const ProfileScreen = ({ styles }: ProfileScreenProps) => {
                                 <PreferenceItem
                                     title="Appearance"
                                     subtitle="Theme settings & accessibility"
-                                    icon={<Palette size={moderateScale(20)} color="#7C3AED" />}
+                                    icon={<Palette size={moderateScale(20)} color={textSecondaryColor} />}
                                     iconBgColor="rgba(124, 58, 237, 0.1)"
                                     onPress={() => router.push('/(features)/profile/appearance')}
                                     styles={styles}

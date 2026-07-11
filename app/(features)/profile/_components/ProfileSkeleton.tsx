@@ -9,7 +9,7 @@ export const ProfileSkeleton = ({ styles }: { styles: any }) => {
     const insets = useSafeAreaInsets();
     const cardColor = useThemeColor({}, 'card');
     const borderColor = useThemeColor({}, 'border');
-    
+
     // Simple pulsing animation
     const fadeAnim = useRef(new Animated.Value(0.5)).current;
 
@@ -78,7 +78,7 @@ export const ProfileSkeleton = ({ styles }: { styles: any }) => {
 
                 {/* Preferences Section */}
                 <SkeletonBox width={100} height={14} borderRadius={4} style={{ marginBottom: 12, marginLeft: 6 }} />
-                
+
                 <View style={[styles.cardAlt, { backgroundColor: cardColor, borderColor }]}>
                     {[1, 2, 3].map((item, index) => (
                         <View key={item}>

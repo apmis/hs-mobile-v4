@@ -16,6 +16,7 @@ export const Colors = {
   error: '#FDECEA',
   errorText: '#D32F2F',
   border: '#EEEEEE',
+  chatBackground: '#EFEAE2',
   white: '#FFFFFF',
 };
 
@@ -34,6 +35,7 @@ export const DarkColors = {
   error: '#B71C1C',
   errorText: '#E57373',
   border: '#2C2C2C',
+  chatBackground: '#0B141A',
   white: '#FFFFFF',
 };
 

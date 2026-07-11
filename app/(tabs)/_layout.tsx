@@ -6,6 +6,7 @@ import { useThemeColor } from '../shared/hooks/useThemeColor';
 import { Platform } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useChatRooms } from '../(features)/chat/_api/chat';
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
@@ -13,6 +14,10 @@ export default function TabsLayout() {
   const textSecondaryColor = useThemeColor({}, 'textSecondary');
   const backgroundColor = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
+
+  const { data: chatRooms = [] } = useChatRooms();
+  const totalUnread = chatRooms.reduce((sum: number, room: any) => sum + (room.unreadCount || 0), 0);
+  const displayBadge = totalUnread > 0 ? (totalUnread > 99 ? '99+' : totalUnread) : undefined;
 
   return (
     <Tabs
@@ -39,6 +44,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Departments',
+
           tabBarIcon: ({ color, size, focused }) => <Home2 size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
         }}
       />
@@ -47,6 +53,13 @@ export default function TabsLayout() {
         name="chats"
         options={{
           title: 'Chats',
+          tabBarBadge: displayBadge,
+          tabBarBadgeStyle: {
+            paddingVertical: moderateScale(2),
+            paddingHorizontal: moderateScale(2),
+            fontSize: moderateScale(11),
+          },
+
           tabBarIcon: ({ color, size, focused }) => <MessageText size={size as number} color={color} variant={focused ? "Bold" : "Linear"} />,
         }}
       />
