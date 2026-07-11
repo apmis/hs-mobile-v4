@@ -8,9 +8,10 @@ import { useThemeColor } from '../hooks/useThemeColor';
 interface TopSearchBarProps {
   searchQuery?: string;
   setSearchQuery?: (text: string) => void;
+  hideAskAI?: boolean;
 }
 
-export default function TopSearchBar({ searchQuery, setSearchQuery }: TopSearchBarProps) {
+export default function TopSearchBar({ searchQuery, setSearchQuery, hideAskAI }: TopSearchBarProps) {
   const router = useRouter();
 
   const cardColor = useThemeColor({}, 'card');
@@ -25,7 +26,7 @@ export default function TopSearchBar({ searchQuery, setSearchQuery }: TopSearchB
       <Search size={moderateScale(20)} color={textSecondaryColor} />
       <TextInput
         style={[styles.searchInput, { color: textColor }]}
-        placeholder="Ask Copilot"
+        placeholder={hideAskAI ? "Search" : "Ask Copilot or Search"}
         placeholderTextColor={textSecondaryColor}
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -35,15 +36,17 @@ export default function TopSearchBar({ searchQuery, setSearchQuery }: TopSearchB
           <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.closeSearchBtn}>
             <X size={moderateScale(20)} color={textSecondaryColor} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.askPillBtn}
-            onPress={() => {
-              router.push(`/chat/copilot?initialQuery=${encodeURIComponent(searchQuery)}`);
-            }}
-          >
-            <Sparkles size={moderateScale(14)} color="#D8B4FE" />
-            <Text style={styles.askPillText}>Ask</Text>
-          </TouchableOpacity>
+          {!hideAskAI && (
+            <TouchableOpacity
+              style={styles.askPillBtn}
+              onPress={() => {
+                router.push(`/chat/copilot?initialQuery=${encodeURIComponent(searchQuery)}`);
+              }}
+            >
+              <Sparkles size={moderateScale(14)} color="#D8B4FE" />
+              <Text style={styles.askPillText}>Ask</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </View>

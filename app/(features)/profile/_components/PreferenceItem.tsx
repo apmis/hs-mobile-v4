@@ -35,7 +35,7 @@ export const PreferenceItem = ({
                 onPress={onPress}
                 disabled={!onPress}
             >
-                <View style={[styles.prefIconBox, { backgroundColor: iconBgColor }]}>
+                <View style={[styles.prefIconBox]}>
                     {icon}
                 </View>
                 <View style={styles.prefTextCol}>

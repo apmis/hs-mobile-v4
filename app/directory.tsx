@@ -40,7 +40,7 @@ export default function DirectoryScreen() {
   const primaryColor = useThemeColor({}, 'primary');
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, backgroundColor }]}>
+    <View style={[styles.container, { paddingTop: insets?.top ?? 0, backgroundColor }]}>
       {/* Header */}
       <View style={[styles.headerContainer, { backgroundColor }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -69,7 +69,7 @@ export default function DirectoryScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + moderateScale(40) }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: (insets?.bottom ?? 0) + moderateScale(40) }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.resultHeader}>
