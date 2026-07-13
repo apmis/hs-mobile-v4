@@ -12,15 +12,21 @@ import {
 } from 'lucide-react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 
-import { useChatMessages, useSendMessage, useMarkAsRead } from '../_api/chat';
-import { mapApiMessageToUI } from '../utils';
-import { formatMessageTime, getMessageDateLabel } from '../utils';
+import { useChatMessages, useSendMessage, useMarkAsRead } from '../../_api/chat';
+import { useChatDraft } from '../../hooks/useChatDraft';
+import { useKeyboardHeight } from '../../hooks/useKeyboardHeight';
+import { mapApiMessageToUI } from '../../utils';
+import { formatMessageTime, getMessageDateLabel } from '../../utils';
 
-import { MyMessageBubble } from './ui/MyMessageBubble';
-import { OtherMessageBubble } from './ui/OtherMessageBubble';
-import ChatDetailSkeleton from './ui/loading/ChatDetailSkeleton';
-import { ChatInput } from './ui/ChatInput';
-import { ChatInfoModal } from './ChatInfoModal';
+import { MyMessageBubble } from '../ui/MyMessageBubble';
+import { OtherMessageBubble } from '../ui/OtherMessageBubble';
+import ChatDetailSkeleton from '../ui/loading/ChatDetailSkeleton';
+import { ChatInput } from '../ui/ChatInput';
+import { ChatHeader } from '../ui/ChatHeader';
+import { ChatOptionsMenu } from '../ui/ChatOptionsMenu';
+import { ChatInfoModal } from '../ChatInfoModal';
+import Toast from 'react-native-toast-message';
+import * as Clipboard from 'expo-clipboard';
 
 const ClusterImage = ({ m, idx, zIndex, marginLeft, borderColor, textSecondaryColor }: any) => {
   const [imgError, setImgError] = useState(false);
@@ -43,7 +49,7 @@ const ClusterImage = ({ m, idx, zIndex, marginLeft, borderColor, textSecondaryCo
 };
 
 import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
-import { styles } from './style/chatDetailStyles';
+import { styles } from '../style/chatDetailStyles';
 
 
 export // -------------------------------------------------------------
@@ -52,9 +58,11 @@ export // -------------------------------------------------------------
   function GroupChatDetail({ id, apiRoom, fallbackName, fallbackAvatar, user }: any) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [inputText, setInputText] = useState('');
+  const { draft: inputText, setDraft: setInputText, clearDraft } = useChatDraft(id);
+  const keyboardHeight = useKeyboardHeight();
   const scrollViewRef = React.useRef<ScrollView>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedMessageIds, setSelectedMessageIds] = useState<string[]>([]);
 
   const { data: actualMessages = [], isLoading: isMessagesLoading } = useChatMessages(apiRoom);
   const sendMessageMutation = useSendMessage();
@@ -74,7 +82,7 @@ export // -------------------------------------------------------------
 
     if (apiRoom) {
       const messageToStore = inputText.trim();
-      setInputText('');
+      clearDraft();
       await sendMessageMutation.mutateAsync({ chatRoom: apiRoom, inputMessage: messageToStore });
       setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -93,6 +101,40 @@ export // -------------------------------------------------------------
 
   const hasNoMessages = apiRoom && !apiRoom.lastmessage;
 
+  const toggleSelection = (msgId: string) => {
+    setSelectedMessageIds((prev) => {
+      if (prev.includes(msgId)) {
+        return prev.filter((id) => id !== msgId);
+      } else {
+        return [...prev, msgId];
+      }
+    });
+  };
+
+  const handleClearSelection = () => setSelectedMessageIds([]);
+
+  const handleCopyAction = async () => {
+    const selectedMsgs = messagesToRender.filter((msg: any) => selectedMessageIds.includes(msg.id));
+    if (selectedMsgs.length === 0) return;
+
+    const sortedMsgs = [...selectedMsgs].sort((a: any, b: any) => {
+      return new Date(a.rawDate || 0).getTime() - new Date(b.rawDate || 0).getTime();
+    });
+
+    const textToCopy = sortedMsgs.map(m => {
+      if (selectedMsgs.length > 1 && !m.isMe && m.sender) {
+        return `[${m.sender}] ${m.text}`;
+      }
+      return m.text;
+    }).filter(Boolean).join('\n\n');
+
+    await Clipboard.setStringAsync(textToCopy);
+    Toast.show({ type: 'success', text1: 'Copied to clipboard' });
+    handleClearSelection();
+  };
+
+  const Container: any = Platform.OS === 'ios' ? KeyboardAvoidingView : View;
+
   if (isMessagesLoading && !actualMessages.length && !hasNoMessages) {
     return (
       <View style={{ flex: 1, backgroundColor }}>
@@ -103,24 +145,19 @@ export // -------------------------------------------------------------
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor }}
+    <Container
+      style={{ flex: 1, backgroundColor, paddingBottom: Platform.OS === 'android' ? (keyboardHeight > 0 ? keyboardHeight + 45 : 0) : 0 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={0}
     >
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View style={[styles.headerContainer, { paddingTop: insets.top + moderateScale(10), backgroundColor: cardColor, borderBottomColor: borderColor }]}>
-        <TouchableOpacity style={styles.iconButtonLeft} onPress={() => router.back()}>
-          <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
-          onPress={() => setShowInfoModal(true)}
-        >
-          {/* Avatars Cluster */}
+      <ChatHeader
+        onPressCenter={() => setShowInfoModal(true)}
+        title={apiRoom ? (apiRoom.name || 'Group Chat') : (fallbackName)}
+        subtitle={apiRoom?.description}
+        avatarElement={
           <View style={styles.groupAvatarCluster}>
             {apiRoom ? (
               <>
@@ -129,14 +166,14 @@ export // -------------------------------------------------------------
                   const marginLeft = idx > 0 ? -moderateScale(12) : 0;
 
                   return (
-                    <ClusterImage 
-                      key={idx} 
-                      m={m} 
-                      idx={idx} 
-                      zIndex={zIndex} 
-                      marginLeft={marginLeft} 
-                      borderColor={borderColor} 
-                      textSecondaryColor={textSecondaryColor} 
+                    <ClusterImage
+                      key={idx}
+                      m={m}
+                      idx={idx}
+                      zIndex={zIndex}
+                      marginLeft={marginLeft}
+                      borderColor={borderColor}
+                      textSecondaryColor={textSecondaryColor}
                     />
                   );
                 })}
@@ -152,17 +189,21 @@ export // -------------------------------------------------------------
               </View>
             )}
           </View>
-
-          <View style={styles.headerTitleContainer}>
-            <Text style={[styles.headerTitle, { color: primaryColor }]} numberOfLines={1}>{apiRoom ? (apiRoom.name || 'Group Chat') : (fallbackName)}</Text>
-            <Text style={[styles.headerSubtitleGroup, { color: textSecondaryColor }]}>{apiRoom?.description}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.iconButton}>
-          <MoreVertical size={moderateScale(24)} color={textSecondaryColor} />
-        </TouchableOpacity>
-      </View>
+        }
+        rightAccessory={
+          <ChatOptionsMenu
+            onClearChat={() => {
+              Toast.show({ type: 'info', text1: 'Clear chat clicked' });
+            }}
+            onViewDetails={() => setShowInfoModal(true)}
+          />
+        }
+        selectedMessageCount={selectedMessageIds.length}
+        onClearSelection={handleClearSelection}
+        onCopyAction={handleCopyAction}
+        onEditAction={() => Toast.show({ type: 'info', text1: 'Edit selected' })}
+        onDeleteAction={() => Toast.show({ type: 'info', text1: 'Delete selected' })}
+      />
 
       <ScrollView
         ref={scrollViewRef}
@@ -226,6 +267,9 @@ export // -------------------------------------------------------------
                   msg={msg}
                   primaryColor={primaryColor}
                   textSecondaryColor={textSecondaryColor}
+                  isSelected={selectedMessageIds.includes(msg.id)}
+                  onLongPress={() => toggleSelection(msg.id)}
+                  onPress={() => selectedMessageIds.length > 0 ? toggleSelection(msg.id) : null}
                 />
               ) : (
                 <OtherMessageBubble
@@ -236,6 +280,9 @@ export // -------------------------------------------------------------
                   borderColor={borderColor}
                   textColor={textColor}
                   textSecondaryColor={textSecondaryColor}
+                  isSelected={selectedMessageIds.includes(msg.id)}
+                  onLongPress={() => toggleSelection(msg.id)}
+                  onPress={() => selectedMessageIds.length > 0 ? toggleSelection(msg.id) : null}
                 />
               )}
             </React.Fragment>
@@ -250,8 +297,8 @@ export // -------------------------------------------------------------
         onSend={handleSend}
       />
 
-      <ChatInfoModal 
-        visible={showInfoModal} 
+      <ChatInfoModal
+        visible={showInfoModal}
         onClose={() => setShowInfoModal(false)}
         apiRoom={apiRoom}
         user={user}
@@ -259,6 +306,6 @@ export // -------------------------------------------------------------
         chatAvatar={apiRoom?.imageurl}
         isGroup={true}
       />
-    </KeyboardAvoidingView>
+    </Container>
   );
 }

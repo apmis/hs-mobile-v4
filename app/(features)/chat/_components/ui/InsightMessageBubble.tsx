@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Activity } from 'lucide-react-native';
 
@@ -9,11 +9,26 @@ interface InsightMessageBubbleProps {
     title: string;
     desc: string;
   };
+  isSelected?: boolean;
+  onLongPress?: () => void;
+  onPress?: () => void;
 }
 
-export function InsightMessageBubble({ msg }: InsightMessageBubbleProps) {
+export function InsightMessageBubble({ msg, isSelected, onLongPress, onPress }: InsightMessageBubbleProps) {
   return (
-    <View style={styles.insightCard}>
+    <Pressable
+      style={[
+        styles.insightCard, 
+        isSelected && { 
+          opacity: 0.7,
+          marginHorizontal: -moderateScale(16),
+          paddingHorizontal: moderateScale(16)
+        }
+      ]}
+      onLongPress={onLongPress}
+      onPress={onPress}
+      delayLongPress={300}
+    >
       <View style={styles.insightIconBox}>
         <Activity size={moderateScale(24)} color="#065F46" />
       </View>
@@ -21,7 +36,7 @@ export function InsightMessageBubble({ msg }: InsightMessageBubbleProps) {
         <Text style={styles.insightTitle}>{msg.title}</Text>
         <Text style={styles.insightDesc}>{msg.desc}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -32,7 +47,8 @@ const styles = ScaledSheet.create({
     padding: moderateScale(16),
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: moderateScale(20),
+    marginBottom: moderateScale(16),
+    marginVertical: moderateScale(4),
   },
   insightIconBox: {
     width: moderateScale(40),

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { DocumentDownload } from 'iconsax-react-native';
 
@@ -17,6 +17,9 @@ interface FileMessageBubbleProps {
   borderColor: string;
   textColor: string;
   textSecondaryColor: string;
+  isSelected?: boolean;
+  onLongPress?: () => void;
+  onPress?: () => void;
 }
 
 export function FileMessageBubble({
@@ -26,9 +29,24 @@ export function FileMessageBubble({
   borderColor,
   textColor,
   textSecondaryColor,
+  isSelected,
+  onLongPress,
+  onPress
 }: FileMessageBubbleProps) {
   return (
-    <View style={styles.messageGroupLeftConsult}>
+    <Pressable 
+      style={[
+        styles.messageGroupLeftConsult, 
+        isSelected && { 
+          opacity: 0.7,
+          marginHorizontal: -moderateScale(16),
+          paddingHorizontal: moderateScale(16)
+        }
+      ]}
+      onLongPress={onLongPress}
+      onPress={onPress}
+      delayLongPress={300}
+    >
       <View style={[styles.fileAttachmentBorder, { backgroundColor: cardColor, borderColor }]}>
         <View style={styles.fileAttachmentCard}>
           <View style={[styles.fileIconBox, { backgroundColor: primaryColor + '20' }]}>
@@ -49,13 +67,14 @@ export function FileMessageBubble({
       <Text style={[styles.timeLabel, { marginTop: moderateScale(4), color: textSecondaryColor }]}>
         {msg.time}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = ScaledSheet.create({
   messageGroupLeftConsult: {
-    marginBottom: moderateScale(16),
+    marginBottom: moderateScale(4),
+    paddingVertical: moderateScale(6),
     alignItems: 'flex-start',
     maxWidth: '85%',
   },

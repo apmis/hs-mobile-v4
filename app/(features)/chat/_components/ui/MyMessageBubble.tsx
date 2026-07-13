@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { CheckCheck, Check, Clock, AlertCircle } from 'lucide-react-native';
 import { Colors } from '@/app/shared/constants/Theme';
@@ -14,11 +14,26 @@ interface MyMessageBubbleProps {
   };
   primaryColor: string;
   textSecondaryColor: string;
+  isSelected?: boolean;
+  onLongPress?: () => void;
+  onPress?: () => void;
 }
 
-export function MyMessageBubble({ msg, primaryColor, textSecondaryColor }: MyMessageBubbleProps) {
+export function MyMessageBubble({ msg, primaryColor, textSecondaryColor, isSelected, onLongPress, onPress }: MyMessageBubbleProps) {
   return (
-    <View style={styles.groupMessageRowRight}>
+    <Pressable
+      style={[
+        styles.groupMessageRowRight,
+        isSelected && {
+          backgroundColor: primaryColor + '15',
+          marginHorizontal: -moderateScale(16),
+          paddingHorizontal: moderateScale(16)
+        }
+      ]}
+      onLongPress={onLongPress}
+      onPress={onPress}
+      delayLongPress={300}
+    >
       <View style={[styles.bubbleRightGroup, { backgroundColor: primaryColor }]}>
         <Text style={styles.messageTextRight}>
           {msg.text}
@@ -36,14 +51,15 @@ export function MyMessageBubble({ msg, primaryColor, textSecondaryColor }: MyMes
           )}
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = ScaledSheet.create({
   groupMessageRowRight: {
     flexDirection: 'row',
-    marginBottom: moderateScale(16),
+    marginBottom: moderateScale(4),
+    paddingVertical: moderateScale(6),
     justifyContent: 'flex-end',
   },
   bubbleRightGroup: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { ChartSquare } from 'iconsax-react-native';
 import Markdown from 'react-native-markdown-display';
@@ -19,6 +19,9 @@ interface OtherMessageBubbleProps {
   borderColor: string;
   textColor: string;
   textSecondaryColor: string;
+  isSelected?: boolean;
+  onLongPress?: () => void;
+  onPress?: () => void;
 }
 
 export function OtherMessageBubble({
@@ -28,6 +31,9 @@ export function OtherMessageBubble({
   borderColor,
   textColor,
   textSecondaryColor,
+  isSelected,
+  onLongPress,
+  onPress
 }: OtherMessageBubbleProps) {
   const markdownStyles = {
     body: {
@@ -63,7 +69,20 @@ export function OtherMessageBubble({
 
   if (variant === 'consultation') {
     return (
-      <View style={styles.messageGroupLeftConsult}>
+      <Pressable
+        style={[
+          styles.messageGroupLeftConsult,
+          isSelected && {
+            backgroundColor: cardColor,
+            opacity: 0.8,
+            marginHorizontal: -moderateScale(16),
+            paddingHorizontal: moderateScale(16)
+          }
+        ]}
+        onLongPress={onLongPress}
+        onPress={onPress}
+        delayLongPress={300}
+      >
         <View style={[styles.bubbleLeft, { backgroundColor: cardColor, borderColor }]}>
           <View style={styles.msgRow}>
             <View style={styles.messageTextLeft}>
@@ -74,13 +93,26 @@ export function OtherMessageBubble({
             <Text style={[styles.timeLabelInner, { color: textSecondaryColor }]}>{msg.time}</Text>
           </View>
         </View>
-      </View>
+      </Pressable>
     );
   }
 
   // default 'group' variant
   return (
-    <View style={styles.groupMessageRow}>
+    <Pressable
+      style={[
+        styles.groupMessageRow,
+        isSelected && {
+          backgroundColor: cardColor,
+          opacity: 0.8,
+          marginHorizontal: -moderateScale(16),
+          paddingHorizontal: moderateScale(16)
+        }
+      ]}
+      onLongPress={onLongPress}
+      onPress={onPress}
+      delayLongPress={300}
+    >
       <View style={styles.groupAvatarCol}>
         <Image
           source={typeof msg.avatar === 'string' ? { uri: msg.avatar } : msg.avatar || { uri: 'https://randomuser.me/api/portraits/men/32.jpg' }}
@@ -106,14 +138,15 @@ export function OtherMessageBubble({
           )}
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = ScaledSheet.create({
   groupMessageRow: {
     flexDirection: 'row',
-    marginBottom: moderateScale(16),
+    marginBottom: moderateScale(4),
+    paddingVertical: moderateScale(6),
   },
   groupAvatarCol: {
     alignItems: 'center',
@@ -185,9 +218,10 @@ const styles = ScaledSheet.create({
 
   // Consultation Layout specific blocks
   messageGroupLeftConsult: {
-    marginBottom: moderateScale(16),
+    marginBottom: moderateScale(4),
+    paddingVertical: moderateScale(6),
     alignItems: 'flex-start',
-    maxWidth: '70%',
+    maxWidth: '85%',
   },
   bubbleLeft: {
     paddingHorizontal: moderateScale(12),

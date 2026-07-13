@@ -2,12 +2,15 @@ import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { useUser } from '@/app/shared/api/auth';
 import { useChatRooms } from '@/app/(features)/chat/_api/chat';
+import { CopilotChatDetail } from './_components/ChatDetails/CopilotChatDetail';
+import { GroupChatDetail } from './_components/ChatDetails/GroupChatDetail';
+import { ConsultationChatDetail } from './_components/ChatDetails/ConsultationChatDetail';
 
 
 
-import { CopilotChatDetail } from '@/app/(features)/chat/_components/CopilotChatDetail';
-import { GroupChatDetail } from "./_components/GroupChatDetail";
-import { ConsultationChatDetail } from "./_components/ConsultationChatDetail";
+// import { CopilotChatDetail } from '@/app/(features)/chat/_components/CopilotChatDetail';
+// import { GroupChatDetail } from "./_components/GroupChatDetail";
+// import { ConsultationChatDetail } from "./_components/ConsultationChatDetail";
 
 export default function ChatWrapperScreen() {
   const { id, fallbackName, fallbackAvatar, initialQuery } = useLocalSearchParams();

@@ -49,16 +49,24 @@ export default function DepartmentDetailScreen() {
         return ['Appointments', 'Check-ins', 'Referrals'];
       case 'Managed Care':
         return [
-          'Search',
-          'Appointments',
-          'Check-ins',
-          'Referrals',
-          'Pre-authorisations',
+          'Accreditation',
+          'Beneficiary',
+          'Check In',
           'Claims',
-          'Payments',
-          'Tariffs',
           'Complaints',
-          'Analytics',
+          'Corporate',
+          'Fund management',
+          'Health Plan',
+          'HIA',
+          'Invoice',
+          'Policy',
+          'Preauthorization',
+          'Premiums',
+          'Provider',
+          'Provider payment',
+          'Referrals',
+          'Report',
+          'Tariff'
         ];
       default:
         return ['Search', 'Overview', 'Reports', 'Settings'];

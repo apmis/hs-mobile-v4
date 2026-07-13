@@ -26,7 +26,7 @@ export default function TopSearchBar({ searchQuery, setSearchQuery, hideAskAI }:
       <Search size={moderateScale(20)} color={textSecondaryColor} />
       <TextInput
         style={[styles.searchInput, { color: textColor }]}
-        placeholder={hideAskAI ? "Search" : "Ask Copilot or Search"}
+        placeholder={hideAskAI ? "Search" : "Ask AI or Search"}
         placeholderTextColor={textSecondaryColor}
         value={searchQuery}
         onChangeText={setSearchQuery}

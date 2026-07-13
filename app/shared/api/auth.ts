@@ -134,15 +134,30 @@ export const useLogout = () => {
 
   return useMutation({
     mutationFn: async () => {
-      await feathersClient.logout();
+      try {
+        await feathersClient.logout();
+      } catch (e) {
+        console.log("Server logout failed, ignoring...", e);
+      }
 
       // Cleanup AsyncStorage just to be absolutely certain
       await AsyncStorage.removeItem('feathers-jwt');
-      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('cached-user');
     },
     onSuccess: () => {
-      // 🚨 CRITICAL: Clear the entire React Query cache so no sensitive data is left behind!
-      queryClient.clear();
+      // First, explicitly set the user to null so AuthGuard immediately sees we are logged out.
+      // This prevents AuthGuard from showing the loading blank screen if the query were simply cleared.
+      queryClient.setQueryData(authKeys.user(), null);
+      
+      // Clear the rest of the cache except the user query to prevent active screens from crashing
+      // before they unmount. Or just remove queries that are not active.
+      // We can safely clear everything after a short delay to let the navigation happen.
+      setTimeout(() => {
+        queryClient.removeQueries({
+          predicate: (query) => query.queryKey[0] !== 'auth'
+        });
+      }, 500);
+
       AsyncStorage.removeItem('REACT_QUERY_OFFLINE_CACHE');
 
       Toast.show({
@@ -155,10 +170,16 @@ export const useLogout = () => {
       router.replace('/(auth)/login');
     },
     onError: () => {
-      // Even if server logout fails, we should still clear local state
-      queryClient.clear();
+      // Even if something fails, we should still clear local state
+      queryClient.setQueryData(authKeys.user(), null);
+      setTimeout(() => {
+        queryClient.removeQueries({
+          predicate: (query) => query.queryKey[0] !== 'auth'
+        });
+      }, 500);
       AsyncStorage.removeItem('REACT_QUERY_OFFLINE_CACHE');
       AsyncStorage.removeItem('feathers-jwt');
+      AsyncStorage.removeItem('cached-user');
       router.replace('/(auth)/login');
     }
   });

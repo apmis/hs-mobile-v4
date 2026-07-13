@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Pressable, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Pressable, TouchableWithoutFeedback, Dimensions, ScrollView, Modal } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Colors, Spacing } from '@/app/shared/constants/Theme';
 import { Bell, Camera, MoreVertical, Search, X, Sparkles } from 'lucide-react-native';
@@ -134,38 +134,40 @@ export default function AppHeader({
             )}
 
             {/* Dropdown Menu Modal */}
-            {showMoreMenu && (
-                <View style={{ position: 'absolute', top: -insets.top, left: -Spacing.md, width: SCREEN_WIDTH, height: SCREEN_HEIGHT + 100, zIndex: 9999, elevation: 9999 }}>
-                    <TouchableWithoutFeedback onPress={() => setShowMoreMenu(false)}>
-                        <View style={styles.dropdownOverlay}>
-                            <TouchableWithoutFeedback>
-                                <View style={[styles.dropdownMenu, { top: insets.top + moderateScale(45), backgroundColor: cardColor, borderColor }]}>
-                                    {moreOptions.map((option, index) => (
-                                        <TouchableOpacity
-                                            key={option}
-                                            style={[
-                                                styles.dropdownItem,
-                                                index !== moreOptions.length - 1 && [styles.dropdownItemBorder, { borderBottomColor: borderColor }]
-                                            ]}
-                                            onPress={() => {
-                                                setShowMoreMenu(false);
-                                                if (onOptionPress) onOptionPress(option);
-                                            }}
-                                        >
-                                            <Text style={[
-                                                styles.dropdownItemText,
-                                                { color: textColor },
-                                                option === title && { color: primaryColor, fontWeight: 'bold' },
-                                                (option === 'Delete' || option === 'Logout') && { color: errorColor }
-                                            ]}>{option}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
-                    </TouchableWithoutFeedback>
+            <Modal visible={showMoreMenu} transparent={true} animationType="fade">
+                <Pressable
+                    style={{ flex: 1, backgroundColor: 'transparent' }}
+                    onPress={() => setShowMoreMenu(false)}
+                />
+                <View style={[styles.dropdownMenu, { top: insets.top + moderateScale(45), backgroundColor: cardColor, borderColor }]}>
+                    <ScrollView
+                        style={{ maxHeight: moderateScale(300) }}
+                        showsVerticalScrollIndicator={true}
+                        contentContainerStyle={{ flexGrow: 1, paddingVertical: moderateScale(4) }}
+                    >
+                        {moreOptions.map((option, index) => (
+                            <TouchableOpacity
+                                key={option}
+                                style={[
+                                    styles.dropdownItem,
+                                    index !== moreOptions.length - 1 && [styles.dropdownItemBorder, { borderBottomColor: borderColor }]
+                                ]}
+                                onPress={() => {
+                                    setShowMoreMenu(false);
+                                    if (onOptionPress) onOptionPress(option);
+                                }}
+                            >
+                                <Text style={[
+                                    styles.dropdownItemText,
+                                    { color: textColor },
+                                    option === title && { color: primaryColor, fontWeight: 'bold' },
+                                    (option === 'Delete' || option === 'Logout') && { color: errorColor }
+                                ]}>{option}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
-            )}
+            </Modal>
         </View>
     );
 }

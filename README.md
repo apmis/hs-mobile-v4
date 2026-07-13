@@ -5,9 +5,10 @@ HealthStack Mobile V4 is a modular, feature-rich React Native mobile application
 ## 🚀 Features
 
 - **Department-Based Architecture:** Scalable, independent modules for various healthcare functions (e.g., Appointments, Pharmacy, Laboratory, Managed Care, Ward).
-- **AI Copilot Search:** Context-aware, global AI Copilot search integrated directly into the application's top navigation.
+- **Intelligent Copilot & Persistent Chat:** A comprehensive, real-time AI Copilot chat interface featuring optimistic UI updates, message editing, and accurate unread tracking.
+- **Offline-Ready Local Storage:** Chunked local storage implementation ensuring resilient message persistence, preventing database crashes, and enabling instant interactions.
 - **Semantic Theming:** Advanced system-aware dark and light mode UI utilizing a robust semantic token system.
-- **Optimized UI:** Fluid interactions leveraging `ParallaxScrollView` and fully native, keyboard-avoiding absolute layout navigation without performance-heavy native Modals.
+- **Optimized UI:** Fluid interactions leveraging `ParallaxScrollView` and robust native navigation combined with deeply integrated OS-level overlays for maximum accessibility and smooth scrolling.
 
 ## 🛠️ Technology Stack
 
@@ -26,6 +27,7 @@ HealthStack Mobile V4 is a modular, feature-rich React Native mobile application
 hs-mobile-v4/
 ├── app/                  # Expo Router file-based routing directory
 │   ├── (features)/       # Main feature modules
+│   │   ├── chat/         # Real-time messaging and AI Copilot interface
 │   │   └── departments/  # Individual healthcare department domains
 │   │       ├── appointments/
 │   │       ├── pharmacy/

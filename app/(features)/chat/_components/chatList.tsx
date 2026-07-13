@@ -13,6 +13,7 @@ import { DataViewState } from '@/app/shared/components/ui/DataViewState';
 import ChatListSkeleton from './ui/loading/ChatListSkeleton';
 import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
 import { useStaffs, useStartPersonalChat, useCreateChannel } from '../_api/chatCreation';
+import { useAllChatDrafts } from '../hooks/useChatDraft';
 import { useLogout } from '@/app/shared/api/auth';
 import { ChatAvatar, SmallAvatar } from './ui/ChatAvatar';
 import { styles } from './style';
@@ -32,7 +33,7 @@ const formatChatTime = (dateString?: string | number) => {
 
 const copilotChat = {
   id: 'copilot',
-  name: 'HealthStack Copilot',
+  name: 'HealthStack AI Assistant',
   message: 'How can I help you today?',
   time: 'Now',
   tag: 'AI Assistant',
@@ -57,6 +58,7 @@ export default function ChatList() {
 
   const { data: user } = useUser();
   const { data: chatRooms = [], isLoading } = useChatRooms();
+  const allDrafts = useAllChatDrafts();
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
@@ -78,12 +80,16 @@ export default function ChatList() {
     const chatName = room?.chatType === "personal" ? personalName : groupName;
     const isGroup = room.members?.length > 2;
 
+    const hasDraft = !!allDrafts[room._id];
+    const draftText = allDrafts[room._id];
+
     return {
       id: room._id,
       name: chatName,
       chatType: room.chatType,
       rawMembers: room.members,
-      message: room.lastmessage?.message || "No messages yet",
+      message: hasDraft ? draftText : (room.lastmessage?.message || "No messages yet"),
+      isDraft: hasDraft,
       lastMessageObj: room.lastmessage,
       isMyLastMessage: room.lastmessage?.createdbyId === user?._id,
       time: formatChatTime(room.lastmessage?.time || room.updatedAt),
@@ -108,7 +114,14 @@ export default function ChatList() {
 
 
 
-  const combinedChats = [copilotChat, ...mappedChats]
+  const hasCopilotDraft = !!allDrafts['copilot'];
+  const copilotChatModified = {
+    ...copilotChat,
+    message: hasCopilotDraft ? allDrafts['copilot'] : copilotChat.message,
+    isDraft: hasCopilotDraft,
+  };
+
+  const combinedChats = [copilotChatModified, ...mappedChats]
     .filter(Boolean)
     .filter((chat: any, index: number, self: any[]) =>
       index === self.findIndex((c: any) => c.id === chat.id)
@@ -196,7 +209,7 @@ export default function ChatList() {
                     </View>
 
                     <View style={styles.chatSubHeader}>
-                      {chat.isMyLastMessage && (
+                      {chat.isMyLastMessage && !chat.isDraft && (
                         <View style={{ marginRight: moderateScale(4), alignSelf: 'center', marginTop: moderateScale(2) }}>
                           {chat.lastMessageObj?.status === 'sending' ? (
                             <Clock size={moderateScale(14)} color={textSecondaryColor} />
@@ -213,6 +226,7 @@ export default function ChatList() {
                         style={[styles.chatMessage, { color: textSecondaryColor, flex: 1 }, chat.unread && [styles.chatMessageUnread, { color: textColor }]]}
                         numberOfLines={1}
                       >
+                        {chat.isDraft && <Text style={{ color: '#EF4444' }}>Draft: </Text>}
                         {chat.message}
                       </Text>
                       {chat.unreadCount > 0 ? (

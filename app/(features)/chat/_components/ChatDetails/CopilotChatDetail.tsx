@@ -17,20 +17,24 @@ import { Send } from 'lucide-react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
 import { ScaledSheet } from 'react-native-size-matters';
-import { MyMessageBubble } from './ui/MyMessageBubble';
-import { OtherMessageBubble } from './ui/OtherMessageBubble';
+import { MyMessageBubble } from '../ui/MyMessageBubble';
+import { OtherMessageBubble } from '../ui/OtherMessageBubble';
 
-import { formatMessageTime } from '../utils';
-import { useCopilotSession, useSendCopilotMessage } from '../_api/copilot';
-import { TypingIndicator } from './ui/loading/TypingIndicator';
-import { ChatInput } from './ui/ChatInput';
+import { formatMessageTime } from '../../utils';
+import { useCopilotSession, useSendCopilotMessage } from '../../_api/copilot';
+import { TypingIndicator } from '../ui/loading/TypingIndicator';
+import { ChatInput } from '../ui/ChatInput';
+import { ChatHeader } from '../ui/ChatHeader';
+import { useChatDraft } from '../../hooks/useChatDraft';
+import { useKeyboardHeight } from '../../hooks/useKeyboardHeight';
 
 
 export function CopilotChatDetail() {
   const router = useRouter();
   const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>();
   const insets = useSafeAreaInsets();
-  const [inputText, setInputText] = useState('');
+  const { draft: inputText, setDraft: setInputText, clearDraft } = useChatDraft('copilot');
+  const keyboardHeight = useKeyboardHeight();
   const scrollViewRef = useRef<ScrollView>(null);
   const hasAutoSent = useRef(false);
 
@@ -45,7 +49,7 @@ export function CopilotChatDetail() {
     {
       id: '1',
       isMe: false,
-      sender: 'HealthStack Copilot',
+      sender: 'HealthStack AI Assistant',
       time: formatMessageTime(new Date()),
       text: 'How can I help you today?',
       avatar: require('@/assets/images/Healthstack.png')
@@ -75,7 +79,7 @@ export function CopilotChatDetail() {
     };
 
     if (typeof textOverride !== 'string') {
-      setInputText('');
+      clearDraft();
     }
     setMockMessages(prev => [...prev, userMsg]);
     setIsSending(true);
@@ -159,29 +163,26 @@ export function CopilotChatDetail() {
 
   return (
     <Container
-      style={{ flex: 1, backgroundColor }}
+      style={{ flex: 1, backgroundColor, paddingBottom: Platform.OS === 'android' ? (keyboardHeight > 0 ? keyboardHeight + 45 : 0) : 0 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={0}
     >
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View style={[localStyles.headerContainer, { paddingTop: insets.top + moderateScale(10), backgroundColor: cardColor, borderBottomColor: borderColor }]}>
-        <TouchableOpacity style={localStyles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
-        </TouchableOpacity>
-
-        <View style={localStyles.avatarContainer}>
+      <ChatHeader
+        disableCenterPress={true}
+        title="HealthStack AI Assistant"
+        subtitle={
+          <Text style={[localStyles.onlineText, { color: textSecondaryColor }]}>Always active</Text>
+        }
+        avatarElement={
           <Image
             source={require('@/assets/images/Healthstack.png')}
             style={localStyles.headerAvatar}
           />
-        </View>
-
-        <View style={localStyles.headerTitleContainer}>
-          <Text style={localStyles.headerTitle}>HealthStack Copilot</Text>
-          <Text style={[localStyles.onlineText, { color: textSecondaryColor }]}>Always active</Text>
-        </View>
-      </View>
+        }
+      />
 
       {/* Chat Area */}
       <ScrollView
@@ -236,7 +237,7 @@ export function CopilotChatDetail() {
         onSend={() => handleSend()}
         isSending={isSending}
         //hideAttachments={true}
-        placeholder="Ask Copilot"
+        placeholder="Ask AI Assistant..."
       />
     </Container>
   );

@@ -41,17 +41,17 @@ export default function ChatFilters({ activeFilter, setActiveFilter }: any) {
             );
           })}
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.filterPillAdd, { backgroundColor: cardColor, borderColor }]}
             onPress={() => setShowFilterModal(true)}
             activeOpacity={0.8}
           >
             <Text style={[styles.filterTextAdd, { color: textSecondaryColor }]}>+</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </ScrollView>
       </ThemedView>
 
-      <Modal visible={showFilterModal} transparent animationType="fade">
+      {/* <Modal visible={showFilterModal} transparent animationType="fade">
         <KeyboardAvoidingView style={styles.modalOverlay} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ThemedView style={styles.filterModalContent} variant="card">
             <ThemedText type="h2" style={styles.filterModalTitle}>Add Custom Filter</ThemedText>
@@ -83,7 +83,7 @@ export default function ChatFilters({ activeFilter, setActiveFilter }: any) {
             </View>
           </ThemedView>
         </KeyboardAvoidingView>
-      </Modal>
+      </Modal> */}
     </>
   );
 }
