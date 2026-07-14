@@ -3,14 +3,14 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
-import { ParallaxScrollView } from '@/app/shared/components/ui/ParallaxScrollView';
-import { DataViewState } from '@/app/shared/components/ui/DataViewState';
-import { useUser } from '@/app/shared/api/auth';
-import { PreferenceItem } from './_components/PreferenceItem';
-import { LogoutButton } from './_components/LogoutButton';
-import { getProfileDisplayData } from './_components/utils';
-import { ProfileSkeleton } from './_components/ProfileSkeleton';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { ParallaxScrollView } from '@/src/shared/components/ui/ParallaxScrollView';
+import { DataViewState } from '@/src/shared/components/ui/DataViewState';
+import { useUser } from '@/src/shared/api/auth';
+import { PreferenceItem } from '@/src/features/profile/_components/PreferenceItem';
+import { LogoutButton } from '@/src/features/profile/_components/LogoutButton';
+import { getProfileDisplayData } from '@/src/features/profile/_components/utils';
+import { ProfileSkeleton } from '@/src/features/profile/_components/ProfileSkeleton';
 import {
     Building2,
     Bell,

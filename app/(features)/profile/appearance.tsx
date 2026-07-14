@@ -4,8 +4,8 @@ import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Monitor, Moon, Sun, Type, Eye } from 'lucide-react-native';
-import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
-import { useThemeStore } from '@/app/shared/store/useThemeStore';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { useThemeStore } from '@/src/shared/store/useThemeStore';
 
 export default function AppearanceScreen() {
   const router = useRouter();

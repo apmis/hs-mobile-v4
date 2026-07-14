@@ -2,8 +2,8 @@ import React from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
-import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
-import AppHeader from '@/app/shared/components/AppHeader';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import AppHeader from '@/src/shared/components/AppHeader';
 
 interface Props {
   title: string;
@@ -11,9 +11,24 @@ interface Props {
 }
 
 const MORE_OPTIONS = [
-  'Search', 'Appointments', 'Check-ins', 'Referrals',
-  'Pre-authorisations', 'Claims', 'Payments', 'Tariffs',
-  'Complaints', 'Analytics'
+  'Accreditation',
+  'Beneficiary',
+  'Check In',
+  'Claims',
+  'Complaints',
+  'Corporate',
+  'Fund management',
+  'Health Plan',
+  'HIA',
+  'Invoice',
+  'Policy',
+  'Preauthorization',
+  'Premiums',
+  'Provider',
+  'Provider payment',
+  'Referrals',
+  'Report',
+  'Tariff'
 ];
 
 export default function ManagedCareScreenWrapper({ title, children }: Props) {
@@ -21,8 +36,8 @@ export default function ManagedCareScreenWrapper({ title, children }: Props) {
   const router = useRouter();
 
   const handleOptionPress = (option: string) => {
-    const slug = option.toLowerCase().replace(' ', '-');
-    router.replace(`/departments/managed-care/${slug}`);
+    const slug = option.toLowerCase().replace(/ /g, '-');
+    router.replace(`/departments/managed-care/${slug}` as any);
   };
 
   return (

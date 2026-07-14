@@ -1,12 +1,12 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Call, Home2, MessageText, Profile, Setting2 } from 'iconsax-react-native';
-import { Colors } from '@/app/shared/constants/Theme';
-import { useThemeColor } from '../shared/hooks/useThemeColor';
+import { Colors } from '@/src/shared/constants/Theme';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 import { Platform } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useChatRooms } from '../(features)/chat/_api/chat';
+import { useChatRooms } from '@/src/features/chat/_api/chat';
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();

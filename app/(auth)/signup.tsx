@@ -13,8 +13,8 @@ import {
 import { useRouter, Stack } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Colors, Spacing } from '@/app/shared/constants/Theme';
-import { useThemeColor } from '../shared/hooks/useThemeColor';
+import { Colors, Spacing } from '@/src/shared/constants/Theme';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 
 // Icons
 import { ArrowLeft } from 'iconsax-react-native';

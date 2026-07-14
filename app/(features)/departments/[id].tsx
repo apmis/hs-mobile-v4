@@ -2,8 +2,8 @@ import React from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
-import AppHeader from '@/app/shared/components/AppHeader';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import AppHeader from '@/src/shared/components/AppHeader';
 
 // Department Views
 import AccountingView from './accounting/_MainView';

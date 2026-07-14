@@ -4,13 +4,13 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { View } from 'react-native';
-import { useActiveTheme } from '@/app/shared/hooks/useThemeColor';
-import { Colors, DarkColors } from '@/app/shared/constants/Theme';
-import { QueryProvider } from '@/app/shared/providers/QueryProvider';
+import { useActiveTheme } from '@/src/shared/hooks/useThemeColor';
+import { Colors, DarkColors } from '@/src/shared/constants/Theme';
+import { QueryProvider } from '@/src/shared/providers/QueryProvider';
 import Toast from 'react-native-toast-message';
-import { toastConfig } from '@/app/shared/components/ui/ToastConfig';
+import { toastConfig } from '@/src/shared/components/ui/ToastConfig';
 
-import { AuthGuard } from '@/app/shared/providers/AuthGuard';
+import { AuthGuard } from '@/src/shared/providers/AuthGuard';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

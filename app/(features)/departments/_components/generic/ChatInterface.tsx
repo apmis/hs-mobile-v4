@@ -13,8 +13,12 @@ import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Maximize4 } from 'iconsax-react-native';
 import { Paperclip, Send, CheckCheck, X } from 'lucide-react-native';
-import { Colors, Spacing } from '@/app/shared/constants/Theme';
-import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
+import { Colors, Spacing } from '@/src/shared/constants/Theme';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { ChatInput } from '@/src/features/chat/_components/ui/ChatInput';
+import { MyMessageBubble } from '@/src/features/chat/_components/ui/MyMessageBubble';
+import { OtherMessageBubble } from '@/src/features/chat/_components/ui/OtherMessageBubble';
+import { useKeyboardHeight } from '@/src/features/chat/hooks/useKeyboardHeight';
 
 interface Message {
   id: string;
@@ -27,14 +31,23 @@ interface Message {
 
 interface ChatInterfaceProps {
   headerComponent?: React.ReactNode;
+  initialMessages?: Message[];
+  suggestedActions?: string[];
 }
 
-export default function ChatInterface({ headerComponent }: ChatInterfaceProps) {
+export default function ChatInterface({ headerComponent, initialMessages, suggestedActions }: ChatInterfaceProps) {
   const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardHeight();
   const [inputText, setInputText] = useState('');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(initialMessages || []);
+
+  React.useEffect(() => {
+    if (initialMessages && initialMessages.length > 0 && messages.length === 0) {
+      setMessages(initialMessages);
+    }
+  }, [initialMessages]);
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
@@ -71,7 +84,9 @@ export default function ChatInterface({ headerComponent }: ChatInterfaceProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { paddingBottom: Platform.OS === 'android' ? (keyboardHeight > 0 ? keyboardHeight + 45 : 0) : 0 }]}
+    >
       {/* Chat Area */}
       <ScrollView
         ref={scrollViewRef}
@@ -82,90 +97,73 @@ export default function ChatInterface({ headerComponent }: ChatInterfaceProps) {
       >
         {headerComponent && <View style={styles.headerComponentContainer}>{headerComponent}</View>}
         {messages.map((msg) => (
-          <View key={msg.id} style={msg.isMe ? styles.messageGroupRight : styles.messageGroupLeft}>
-            <Text
-              style={[
-                msg.isMe ? styles.senderNameRight : styles.senderName,
-                msg.isMe ? { color: primaryColor } : { color: textSecondaryColor },
-              ]}
-            >
-              {msg.sender}
-            </Text>
+          <View key={msg.id}>
+            {msg.image && (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[
+                  styles.imageAttachmentContainer,
+                  msg.isMe ? { alignSelf: 'flex-end', marginBottom: moderateScale(4) } : { alignSelf: 'flex-start', marginBottom: moderateScale(4), marginLeft: moderateScale(16) }
+                ]}
+                onPress={() => setPreviewImage(msg.image || null)}
+              >
+                <Image source={{ uri: msg.image }} style={styles.attachmentImage} />
+                <View style={styles.expandIconContainer}>
+                  <Maximize4 size={moderateScale(24)} color="#FFFFFF" variant="Linear" />
+                </View>
+              </TouchableOpacity>
+            )}
 
-            <View
-              style={[
-                msg.isMe ? styles.bubbleRight : styles.bubbleLeft,
-                msg.isMe ? { backgroundColor: primaryColor } : { backgroundColor: cardColor, borderColor },
-              ]}
-            >
-              {msg.image && (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.imageAttachmentContainer}
-                  onPress={() => setPreviewImage(msg.image || null)}
-                >
-                  <Image source={{ uri: msg.image }} style={styles.attachmentImage} />
-                  <View style={styles.expandIconContainer}>
-                    <Maximize4 size={moderateScale(24)} color="#FFFFFF" variant="Linear" />
-                  </View>
-                </TouchableOpacity>
-              )}
-
-              {msg.text && (
-                <Text
-                  style={[
-                    msg.isMe ? styles.messageTextRight : styles.messageTextLeft,
-                    msg.isMe ? { color: Colors.white } : { color: textColor },
-                    msg.image && { marginTop: moderateScale(12) },
-                  ]}
-                >
-                  {msg.text}
-                </Text>
-              )}
-            </View>
-
-            <View style={msg.isMe ? styles.timeStatusContainer : null}>
-              <Text style={[styles.timeLabel, { color: textSecondaryColor }]}>{msg.time}</Text>
-              {msg.isMe && (
-                <CheckCheck size={moderateScale(14)} color={primaryColor} style={{ marginLeft: 4 }} />
-              )}
-            </View>
+            {msg.isMe ? (
+              <MyMessageBubble
+                msg={{ ...msg, text: msg.text || '', status: 'read' }}
+                primaryColor={primaryColor}
+                textSecondaryColor={textSecondaryColor}
+              />
+            ) : (
+              <OtherMessageBubble
+                msg={{ ...msg, text: msg.text || '' }}
+                variant="consultation"
+                cardColor={cardColor}
+                borderColor={borderColor}
+                textColor={textColor}
+                textSecondaryColor={textSecondaryColor}
+              />
+            )}
           </View>
         ))}
       </ScrollView>
 
+      {/* Suggested Actions */}
+      {suggestedActions && suggestedActions.length > 0 && (
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.suggestedActionsContainer}
+          contentContainerStyle={styles.suggestedActionsContent}
+        >
+          {suggestedActions.map((action, index) => (
+            <TouchableOpacity 
+              key={index} 
+              style={[styles.actionChip, { backgroundColor: primaryColor + '15', borderColor: primaryColor }]}
+              onPress={() => {
+                setInputText(action);
+              }}
+            >
+              <Text style={[styles.actionChipText, { color: primaryColor }]}>{action}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+
       {/* Input Area */}
-      <View
-        style={[
-          styles.inputContainer,
-          {
-            paddingBottom: insets.bottom || moderateScale(20),
-            backgroundColor: cardColor,
-            borderTopColor: borderColor,
-          },
-        ]}
-      >
-        <View style={[styles.inputWrapper, { backgroundColor: borderColor, borderColor }]}>
-          <TouchableOpacity style={styles.attachButton}>
-            <Paperclip size={moderateScale(20)} color={textSecondaryColor} />
-          </TouchableOpacity>
-          <TextInput
-            style={[styles.textInput, { color: textColor }]}
-            placeholder="Ask Copilot"
-            placeholderTextColor={textSecondaryColor}
-            value={inputText}
-            onChangeText={setInputText}
-            multiline
-            onSubmitEditing={handleSend}
-          />
-          <TouchableOpacity
-            style={[styles.sendButton, { backgroundColor: primaryColor, shadowColor: primaryColor }]}
-            onPress={handleSend}
-          >
-            <Send size={moderateScale(18)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <ChatInput
+        inputText={inputText}
+        setInputText={setInputText}
+        onSend={handleSend}
+        placeholder="Ask Copilot"
+        hideAttachments={false}
+      />
 
       <Modal
         visible={!!previewImage}
@@ -202,6 +200,26 @@ const styles = ScaledSheet.create({
   },
   headerComponentContainer: {
     marginBottom: moderateScale(20),
+  },
+  suggestedActionsContainer: {
+    maxHeight: moderateScale(50),
+    minHeight: moderateScale(40),
+    marginBottom: moderateScale(8),
+  },
+  suggestedActionsContent: {
+    paddingHorizontal: Spacing.md,
+    alignItems: 'center',
+  },
+  actionChip: {
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: moderateScale(8),
+    borderRadius: moderateScale(20),
+    borderWidth: 1,
+    marginRight: moderateScale(8),
+  },
+  actionChipText: {
+    fontSize: moderateScale(13),
+    fontFamily: 'Switzer-Medium',
   },
   messageGroupLeft: {
     marginBottom: moderateScale(20),

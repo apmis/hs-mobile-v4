@@ -1,5 +1,5 @@
-import { ThemedText } from '@/app/shared/components/ui/ThemedText';
-import { ThemedView } from '@/app/shared/components/ui/ThemedView';
+import { ThemedText } from '@/src/shared/components/ui/ThemedText';
+import { ThemedView } from '@/src/shared/components/ui/ThemedView';
 import React from 'react';
 import ManagedCareScreenWrapper from '../_ScreenWrapper';
 import ChatInterface from '@/app/(features)/departments/_components/generic/ChatInterface';
@@ -9,7 +9,7 @@ export default function ClaimsScreen() {
     <ManagedCareScreenWrapper title="Claims">
       <ThemedView style={{ flex: 1 }}>
         <ThemedText type="subtitle" style={{ padding: 16, textAlign: 'center' }}>
-          Claims Details
+          Claims Chats
         </ThemedText>
         <ChatInterface />
       </ThemedView>

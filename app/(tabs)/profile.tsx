@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useThemeColor } from '@/app/shared/hooks/useThemeColor';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 import ProfileScreen from '../(features)/profile';
 
 

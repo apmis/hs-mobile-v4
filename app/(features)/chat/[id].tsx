@@ -1,14 +1,14 @@
 import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { useUser } from '@/app/shared/api/auth';
-import { useChatRooms } from '@/app/(features)/chat/_api/chat';
-import { CopilotChatDetail } from './_components/ChatDetails/CopilotChatDetail';
-import { GroupChatDetail } from './_components/ChatDetails/GroupChatDetail';
-import { ConsultationChatDetail } from './_components/ChatDetails/ConsultationChatDetail';
+import { useUser } from '@/src/shared/api/auth';
+import { useChatRooms } from '@/src/features/chat/_api/chat';
+import { CopilotChatDetail } from '@/src/features/chat/_components/ChatDetails/CopilotChatDetail';
+import { GroupChatDetail } from '@/src/features/chat/_components/ChatDetails/GroupChatDetail';
+import { ConsultationChatDetail } from '@/src/features/chat/_components/ChatDetails/ConsultationChatDetail';
 
 
 
-// import { CopilotChatDetail } from '@/app/(features)/chat/_components/CopilotChatDetail';
+// import { CopilotChatDetail } from '@/src/features/chat/_components/CopilotChatDetail';
 // import { GroupChatDetail } from "./_components/GroupChatDetail";
 // import { ConsultationChatDetail } from "./_components/ConsultationChatDetail";
 

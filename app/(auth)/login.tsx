@@ -12,13 +12,13 @@ import {
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { Colors, Typography } from '@/app/shared/constants/Theme';
-import Button from '@/app/shared/components/ui/Button';
-import Input from '@/app/shared/components/ui/Input';
-import { useThemeColor } from '../shared/hooks/useThemeColor';
-import { useLogin } from '@/app/shared/api/auth';
+import { Colors, Typography } from '@/src/shared/constants/Theme';
+import Button from '@/src/shared/components/ui/Button';
+import Input from '@/src/shared/components/ui/Input';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { useLogin } from '@/src/shared/api/auth';
 import Toast from 'react-native-toast-message';
-import { loginSchema } from '@/app/shared/utils/validators';
+import { loginSchema } from '@/src/shared/utils/validators';
 import { z } from 'zod';
 
 export default function LoginScreen() {

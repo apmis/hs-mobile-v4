@@ -15,13 +15,13 @@ import {
   MessageCircle,
   Stethoscope
 } from 'lucide-react-native';
-import { Colors, Typography } from '@/app/shared/constants/Theme';
+import { Colors, Typography } from '@/src/shared/constants/Theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useThemeColor } from '../../shared/hooks/useThemeColor';
-import { useNotifications, useMarkAsRead } from '@/app/shared/api/notifications';
-import { useUser } from '@/app/shared/api/auth';
-import { DataViewState } from '@/app/shared/components/ui/DataViewState';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { useNotifications, useMarkAsRead } from '@/src/shared/api/notifications';
+import { useUser } from '@/src/shared/api/auth';
+import { DataViewState } from '@/src/shared/components/ui/DataViewState';
 
 const formatRelativeTime = (dateString: string) => {
   if (!dateString) return '';

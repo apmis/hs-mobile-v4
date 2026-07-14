@@ -5,8 +5,8 @@ import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Search, X } from 'lucide-react-native';
 import { MessageText, Call } from 'iconsax-react-native';
-import { Colors, Typography, Spacing } from './shared/constants/Theme';
-import { useThemeColor } from './shared/hooks/useThemeColor';
+import { Colors, Typography, Spacing } from '@/src/shared/constants/Theme';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 
 const STAFF_LIST = [
   { id: 'staff-0', name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', department: 'Cardiology', image: 'https://randomuser.me/api/portraits/women/44.jpg', isOnline: true },

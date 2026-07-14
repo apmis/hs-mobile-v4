@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Spacing } from '@/app/shared/constants/Theme';
+import { Colors, Spacing } from '@/src/shared/constants/Theme';
 import { Link2, Phone, PhoneMissed, PhoneIncoming, PhoneOutgoing, Video } from 'lucide-react-native';
-import { useThemeColor } from '../shared/hooks/useThemeColor';
-import { ThemedView } from '../shared/components/ui/ThemedView';
-import { ThemedText } from '../shared/components/ui/ThemedText';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { ThemedView } from '@/src/shared/components/ui/ThemedView';
+import { ThemedText } from '@/src/shared/components/ui/ThemedText';
 
 const CALLS_DATA = [
   {

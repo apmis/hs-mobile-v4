@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Platform, StatusBar, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { Spacing } from '@/app/shared/constants/Theme';
+import { Spacing } from '@/src/shared/constants/Theme';
 import {
   Hospital, Briefcase, Scanning, Drop,
   Activity, Heart, Profile2User, Building3,
@@ -13,8 +13,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { FlaskConical } from 'lucide-react-native';
-import AppHeader from '@/app/shared/components/AppHeader';
-import { useThemeColor } from '../shared/hooks/useThemeColor';
+import AppHeader from '@/src/shared/components/AppHeader';
+import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 
 const DEPARTMENTS = [
   // { name: 'Accounting', Icon: Wallet3 },
