@@ -22,7 +22,7 @@ export const Colors = {
 
 export const DarkColors = {
   primary: '#1E88E5',
-  primaryLight: '#0D47A1',
+  primaryLight: '#1C4B82',
   secondary: '#A0A0A0',
   background: '#1a1919ff',
   card: '#1E1E1E',

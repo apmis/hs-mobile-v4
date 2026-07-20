@@ -11,7 +11,7 @@ import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 import TopSearchBar from '../TopSearchBar';
 import NotificationBell from './NotificationBell';
 
-const LOCATIONS = ['HQ Hospital:Lagos', 'North Wing: Abuja', 'East Wing: Port Harcourt', 'Pediatrics Center: Kano', 'Emergency Bay: Ibadan'];
+import { useLocationStore } from '../../store/useLocationStore';
 const DEFAULT_MORE_OPTIONS = ['Create', 'List', 'Find', 'View details', 'Edit', 'Delete'];
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -27,6 +27,7 @@ interface AppHeaderProps {
     showMoreOptions?: boolean;
     moreOptions?: string[];
     onOptionPress?: (option: string) => void;
+    moduleLocationType?: string;
 }
 
 export default function AppHeader({
@@ -40,13 +41,20 @@ export default function AppHeader({
     showLocation = false,
     showMoreOptions = false,
     moreOptions = DEFAULT_MORE_OPTIONS,
-    onOptionPress
+    onOptionPress,
+    moduleLocationType
 }: AppHeaderProps) {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const [showLocationSheet, setShowLocationSheet] = useState(false);
     const [showMoreMenu, setShowMoreMenu] = useState(false);
-    const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0]);
+
+    const { userLocations, activeLocation, setActiveLocation } = useLocationStore();
+
+    // Filter locations by moduleLocationType if provided
+    const availableLocations = moduleLocationType
+        ? userLocations.filter(loc => loc.locationType?.toLowerCase() === moduleLocationType.toLowerCase())
+        : userLocations;
 
     const backgroundColor = useThemeColor({}, 'background');
     const cardColor = useThemeColor({}, 'card');
@@ -66,14 +74,16 @@ export default function AppHeader({
                             <ArrowLeft size={moderateScale(24)} color={textColor} variant="Linear" />
                         </TouchableOpacity>
                     )}
-                    <View>
-                        <Text style={[styles.mainHeaderTitle, { color: textColor }]}>{title}</Text>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.mainHeaderTitle, { color: textColor }]} numberOfLines={1}>{title}</Text>
                         {subtitle && (
-                            <Text style={[styles.locationText, { color: textSecondaryColor, marginTop: 2 }]}>{subtitle}</Text>
+                            <Text style={[styles.locationText, { color: textSecondaryColor, marginTop: 2 }]} numberOfLines={1}>{subtitle}</Text>
                         )}
                         {showLocation && (
                             <Pressable onPress={() => setShowLocationSheet(true)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                                <Text style={[styles.locationText, { color: textSecondaryColor }]}>@{selectedLocation}</Text>
+                                <Text style={[styles.locationText, { color: textSecondaryColor }]} numberOfLines={1}>
+                                    @{activeLocation ? `${activeLocation.name}${activeLocation.branch ? ` : ${activeLocation.branch}` : ''}` : 'Select Location'}
+                                </Text>
                             </Pressable>
                         )}
                     </View>
@@ -97,41 +107,48 @@ export default function AppHeader({
             )}
 
             {/* Location Bottom Sheet */}
-            {showLocationSheet && (
-                <View style={{ position: 'absolute', top: -insets.top, left: -Spacing.md, width: SCREEN_WIDTH, height: SCREEN_HEIGHT + 100, zIndex: 9999, elevation: 9999 }}>
+            <Modal visible={showLocationSheet} transparent={true} animationType="slide">
+                <View style={styles.modalOverlay}>
                     <TouchableWithoutFeedback onPress={() => setShowLocationSheet(false)}>
-                        <View style={styles.modalOverlay}>
-                            <TouchableWithoutFeedback>
-                                <View style={[styles.bottomSheet, { backgroundColor: cardColor }]}>
-                                    <View style={styles.sheetIndicator} />
-                                    <Text style={[styles.sheetTitle, { color: textColor }]}>Select Location</Text>
-
-                                    {LOCATIONS.map((loc) => (
-                                        <TouchableOpacity
-                                            key={loc}
-                                            style={[
-                                                styles.locationItem,
-                                                { backgroundColor: backgroundColor },
-                                                selectedLocation === loc && { backgroundColor: primaryLightColor, borderColor: primaryColor }
-                                            ]}
-                                            onPress={() => {
-                                                setSelectedLocation(loc);
-                                                setShowLocationSheet(false);
-                                            }}
-                                        >
-                                            <Text style={[
-                                                styles.locationItemText,
-                                                { color: textColor },
-                                                selectedLocation === loc && { color: primaryColor }
-                                            ]}>{loc}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
+                        <View style={{ flex: 1 }} />
                     </TouchableWithoutFeedback>
+                    <View style={[styles.bottomSheet, { backgroundColor: cardColor }]}>
+                        <View style={styles.sheetIndicator} />
+                        <Text style={[styles.sheetTitle, { color: textColor }]}>Select Location</Text>
+
+                        {availableLocations.length === 0 && (
+                            <Text style={{ textAlign: 'center', color: textSecondaryColor, marginTop: moderateScale(16) }}>
+                                No locations found for this module.
+                            </Text>
+                        )}
+
+                        {availableLocations.map((loc) => {
+                            const isSelected = activeLocation?._id === loc._id;
+                            const label = `${loc.name}${loc.branch ? ` : ${loc.branch}` : ''}`;
+                            return (
+                                <TouchableOpacity
+                                    key={loc._id}
+                                    style={[
+                                        styles.locationItem,
+                                        { backgroundColor: backgroundColor },
+                                        isSelected && { backgroundColor: primaryLightColor, borderColor: primaryColor }
+                                    ]}
+                                    onPress={() => {
+                                        setActiveLocation(loc);
+                                        setShowLocationSheet(false);
+                                    }}
+                                >
+                                    <Text style={[
+                                        styles.locationItemText,
+                                        { color: textColor },
+                                        isSelected && { color: primaryColor }
+                                    ]}>{label}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
                 </View>
-            )}
+            </Modal>
 
             {/* Dropdown Menu Modal */}
             <Modal visible={showMoreMenu} transparent={true} animationType="fade">
@@ -188,6 +205,8 @@ const styles = ScaledSheet.create({
     leftSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
+        paddingRight: moderateScale(10),
     },
     backButton: {
         padding: Spacing.xs,

@@ -31,7 +31,8 @@ export const useChatRooms = () => {
             if (data.length > 0) {
                 const roomIds = data.map((r: any) => r._id);
                 try {
-                    const unreadResponse = await feathersClient.service('chat').find({
+                    // Fetch unread counts in the background so we don't block the chat list from rendering
+                    feathersClient.service('chat').find({
                         query: {
                             chatroomId: { $in: roomIds },
                             createdbyId: { $ne: user._id },
@@ -39,16 +40,28 @@ export const useChatRooms = () => {
                             $select: ['chatroomId'],
                             $limit: 1000
                         }
-                    });
-                    const unreadMsgs = Array.isArray(unreadResponse) ? unreadResponse : unreadResponse.data || [];
-                    const counts: Record<string, number> = {};
-                    unreadMsgs.forEach((m: any) => { counts[m.chatroomId] = (counts[m.chatroomId] || 0) + 1; });
+                    }).then((unreadResponse: any) => {
+                        const unreadMsgs = Array.isArray(unreadResponse) ? unreadResponse : unreadResponse.data || [];
+                        const counts: Record<string, number> = {};
+                        unreadMsgs.forEach((m: any) => { counts[m.chatroomId] = (counts[m.chatroomId] || 0) + 1; });
 
-                    data.forEach((r: any) => {
-                        r.unreadCount = counts[r._id] || 0;
+                        queryClient.setQueryData(chatKeys.rooms(), (old: any[] = []) => {
+                            if (!old) return old;
+                            return old.map(r => ({
+                                ...r,
+                                unreadCount: counts[r._id] || 0
+                            }));
+                        });
+                    }).catch((error: any) => {
+                        console.error("Failed to fetch initial unread counts in background", error);
                     });
-                } catch (error) {
-                    console.error("Failed to fetch initial unread counts", error);
+
+                    // Set default unreadCount to 0 immediately
+                    data.forEach((r: any) => {
+                        r.unreadCount = 0;
+                    });
+                } catch (error: any) {
+                    console.error("Error setting up background unread fetch", error);
                 }
             }
 
@@ -465,6 +478,42 @@ export const useMarkAsRead = () => {
                 queryClient.setQueryData(chatKeys.rooms(), context.previousRooms);
             }
         },
+    });
+};
+
+export const useDeleteChat = () => {
+    const { data: user } = useUser();
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (chatId: string) => {
+            if (!user?._id) throw new Error("User not found");
+
+            // Get current room from cache
+            const rooms = queryClient.getQueryData(chatKeys.rooms()) as any[];
+            const room = rooms?.find(r => r._id === chatId);
+
+            if (room && room.members) {
+                // Filter out the current user from the members array
+                const newMembers = room.members.filter((m: any) => m._id !== user._id);
+                
+                // Patch the chatroom with the updated members list
+                return await feathersClient.service('chatroom').patch(chatId, { members: newMembers });
+            } else {
+                // Fallback (though unlikely to happen)
+                throw new Error("Chatroom data not found in cache");
+            }
+        },
+        onSuccess: (_, chatId) => {
+            // Optimistically remove from cache
+            queryClient.setQueryData(chatKeys.rooms(), (old: any[] = []) => 
+                old.filter(r => r._id !== chatId)
+            );
+            Toast.show({ type: 'success', text1: 'Chat deleted successfully' });
+        },
+        onError: (error: any) => {
+            Toast.show({ type: 'error', text1: 'Failed to delete chat', text2: error.message });
+        }
     });
 };
 

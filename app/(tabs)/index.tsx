@@ -2,48 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Platform, StatusBar, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { Spacing } from '@/src/shared/constants/Theme';
-import {
-  Hospital, Briefcase, Scanning, Drop,
-  Activity, Heart, Profile2User, Building3,
-  ShieldSecurity, Wallet3, Moneys, Building, Headphone,
-  Personalcard, Send2, Calendar, CalendarTick, Routing,
-  Verify,
-  Folder
-} from 'iconsax-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { FlaskConical } from 'lucide-react-native';
-import AppHeader from '@/src/shared/components/AppHeader';
+import { MODULES } from '@/src/shared/constants/Modules';
 import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
+import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppHeader from '@/src/shared/components/AppHeader';
+import { useUser } from '@/src/shared/api/auth';
 
-const DEPARTMENTS = [
-  // { name: 'Accounting', Icon: Wallet3 },
-  // { name: 'Admin', Icon: ShieldSecurity },
-  // { name: 'Appointments', Icon: CalendarTick },
-  // { name: 'Appt Workflow', Icon: Routing },
-  // { name: 'Blood Bank', Icon: Drop },
-  // { name: 'CRM', Icon: Headphone },
-  // { name: 'Case Management', Icon: Personalcard },
-  // { name: 'Clients', Icon: Profile2User },
-  // { name: 'Clinic', Icon: Hospital },
-  // { name: 'Corporate', Icon: Building },
-  // { name: 'Documentation', Icon: Folder },
-  // { name: 'ECG', Icon: Heart },
-  // { name: 'Finance', Icon: Moneys },
-  // { name: 'Immunization', Icon: Activity },
-  // { name: 'Laboratory', Icon: FlaskConical },
-  { name: 'Managed Care', Icon: Verify },
-  { name: 'Pharmacy', Icon: Briefcase },
-  { name: 'Radiology', Icon: Scanning },
-  { name: 'Referral', Icon: Send2 },
-  { name: 'Schedule', Icon: Calendar },
-  { name: 'Theatre', Icon: Profile2User },
-  { name: 'Ward', Icon: Building3 },
-];
-
-export default function DepartmentsScreen() {
+export default function ModulesScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const { data: user } = useUser();
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
@@ -52,29 +21,47 @@ export default function DepartmentsScreen() {
   const primaryColor = useThemeColor({}, 'primary');
   const primaryLightColor = useThemeColor({}, 'primaryLight');
 
-  const filteredDepartments = DEPARTMENTS.filter(item =>
+  const roles = user?.roles || [];
+  const isOrgAdmin = roles.includes('Admin');
+  const facilityModules = user?.facilityDetail?.facilityModules || [];
+
+  const facilitySortedMenuItems = MODULES.filter((item) =>
+    facilityModules.includes(item.name)
+  );
+
+  const getFacilitySortedMenuItems = facilitySortedMenuItems.length > 0 
+    ? facilitySortedMenuItems 
+    : MODULES.filter((item) => item.name === 'Admin');
+
+  const rolesMenuList = isOrgAdmin
+    ? getFacilitySortedMenuItems
+    : getFacilitySortedMenuItems.filter((item) => roles.includes(item.name));
+
+  const finalModules = user?.stacker ? MODULES : rolesMenuList;
+
+  const filteredModules = finalModules.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <AppHeader
-        title="Departments"
+        title="Modules"
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.card, { backgroundColor }]}>
-          {filteredDepartments.map((item, itemIdx) => (
+          {filteredModules.map((item, itemIdx) => (
             <Pressable
               key={itemIdx}
               style={({ pressed, hovered }: any) => [
                 styles.itemRow,
-                itemIdx !== filteredDepartments.length - 1 && [styles.itemBorder, { borderBottomColor: borderColor }],
+                itemIdx !== filteredModules.length - 1 && [styles.itemBorder, { borderBottomColor: borderColor }],
                 (pressed || hovered) && { backgroundColor: primaryLightColor }
               ]}
-              onPress={() => router.push(`/departments/${item.name}`)}
+              onPress={() => router.push(`/modules/${item.name}`)}
             >
               <View style={[styles.itemIconContainer, { backgroundColor: cardColor }]}>
                 <item.Icon size={moderateScale(20)} color={primaryColor} variant="Bold" />

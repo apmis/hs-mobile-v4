@@ -28,6 +28,8 @@ const ProfileScreen = ({ styles }: ProfileScreenProps) => {
     const insets = useSafeAreaInsets();
     const router = useRouter();
     const { data: currentEmployee, isLoading, isError, error, refetch } = useUser();
+
+    //console.log('currentEmployee', currentEmployee?.facilityId);
     //const backgroundColor = useThemeColor({}, 'background');
     const cardColor = useThemeColor({}, 'card');
     const textColor = useThemeColor({}, 'text');

@@ -107,7 +107,7 @@ export const useLogin = () => {
       await AsyncStorage.setItem('cached-user', JSON.stringify(currentEmployee));
 
       queryClient.setQueryData(authKeys.user(), currentEmployee);
-      console.log('user data: ', currentEmployee);
+      //console.log('user data: ', currentEmployee);
 
       Toast.show({
         type: 'success',
@@ -148,7 +148,7 @@ export const useLogout = () => {
       // First, explicitly set the user to null so AuthGuard immediately sees we are logged out.
       // This prevents AuthGuard from showing the loading blank screen if the query were simply cleared.
       queryClient.setQueryData(authKeys.user(), null);
-      
+
       // Clear the rest of the cache except the user query to prevent active screens from crashing
       // before they unmount. Or just remove queries that are not active.
       // We can safely clear everything after a short delay to let the navigation happen.

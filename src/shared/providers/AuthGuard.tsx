@@ -25,6 +25,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const inAuthGroup = segments[0] === '(auth)';
     const isAtRoot = !segments[0];
 
+    // console.log('user 2', JSON.stringify(user?.locations));
+
     console.log("=== AUTH STATUS CHECK ===");
     console.log("Is Loading:", isLoading);
     console.log("User object exists?", !!user);

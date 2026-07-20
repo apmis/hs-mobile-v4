@@ -9,16 +9,16 @@ import { Colors, Typography, Spacing } from '@/src/shared/constants/Theme';
 import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 
 const STAFF_LIST = [
-  { id: 'staff-0', name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', department: 'Cardiology', image: 'https://randomuser.me/api/portraits/women/44.jpg', isOnline: true },
-  { id: 'staff-1', name: 'Marcus Chen, RN', specialty: 'Pediatrics', department: 'Nursing', image: 'https://randomuser.me/api/portraits/men/32.jpg', isOnline: true },
-  { id: 'staff-2', name: 'Dr. Robert Miller', specialty: 'Orthopedics', department: 'Orthopedics', image: 'https://randomuser.me/api/portraits/men/46.jpg', isOnline: true },
-  { id: 'staff-3', name: 'Dr. Emily Watson', specialty: 'Neurology', department: 'Neurology', image: 'https://randomuser.me/api/portraits/women/68.jpg', isOnline: false },
-  { id: 'staff-4', name: 'David Kim, NP', specialty: 'Emergency Med.', department: 'Emergency', image: 'https://randomuser.me/api/portraits/men/22.jpg', isOnline: true },
-  { id: 'staff-5', name: 'Dr. Amanda Thorne', specialty: 'General Surgery', department: 'Surgery', image: 'https://randomuser.me/api/portraits/women/33.jpg', isOnline: false },
-  { id: 'staff-6', name: 'James Wilson, PT', specialty: 'Physical Therapy', department: 'Rehabilitation', image: 'https://randomuser.me/api/portraits/men/61.jpg', isOnline: true },
-  { id: 'staff-7', name: 'Dr. Olivia Patel', specialty: 'Oncology', department: 'Oncology', image: 'https://randomuser.me/api/portraits/women/49.jpg', isOnline: false },
-  { id: 'staff-8', name: 'Michael Chang, RT', specialty: 'Respiratory', department: 'Respiratory Therapy', image: 'https://randomuser.me/api/portraits/men/15.jpg', isOnline: true },
-  { id: 'staff-9', name: 'Dr. Rachel Green', specialty: 'Anesthesiology', department: 'Anesthesiology', image: 'https://randomuser.me/api/portraits/women/24.jpg', isOnline: true },
+  { id: 'staff-0', name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', module: 'Cardiology', image: 'https://randomuser.me/api/portraits/women/44.jpg', isOnline: true },
+  { id: 'staff-1', name: 'Marcus Chen, RN', specialty: 'Pediatrics', module: 'Nursing', image: 'https://randomuser.me/api/portraits/men/32.jpg', isOnline: true },
+  { id: 'staff-2', name: 'Dr. Robert Miller', specialty: 'Orthopedics', module: 'Orthopedics', image: 'https://randomuser.me/api/portraits/men/46.jpg', isOnline: true },
+  { id: 'staff-3', name: 'Dr. Emily Watson', specialty: 'Neurology', module: 'Neurology', image: 'https://randomuser.me/api/portraits/women/68.jpg', isOnline: false },
+  { id: 'staff-4', name: 'David Kim, NP', specialty: 'Emergency Med.', module: 'Emergency', image: 'https://randomuser.me/api/portraits/men/22.jpg', isOnline: true },
+  { id: 'staff-5', name: 'Dr. Amanda Thorne', specialty: 'General Surgery', module: 'Surgery', image: 'https://randomuser.me/api/portraits/women/33.jpg', isOnline: false },
+  { id: 'staff-6', name: 'James Wilson, PT', specialty: 'Physical Therapy', module: 'Rehabilitation', image: 'https://randomuser.me/api/portraits/men/61.jpg', isOnline: true },
+  { id: 'staff-7', name: 'Dr. Olivia Patel', specialty: 'Oncology', module: 'Oncology', image: 'https://randomuser.me/api/portraits/women/49.jpg', isOnline: false },
+  { id: 'staff-8', name: 'Michael Chang, RT', specialty: 'Respiratory', module: 'Respiratory Therapy', image: 'https://randomuser.me/api/portraits/men/15.jpg', isOnline: true },
+  { id: 'staff-9', name: 'Dr. Rachel Green', specialty: 'Anesthesiology', module: 'Anesthesiology', image: 'https://randomuser.me/api/portraits/women/24.jpg', isOnline: true },
 ];
 
 export default function DirectoryScreen() {
@@ -29,7 +29,7 @@ export default function DirectoryScreen() {
   const filteredStaff = STAFF_LIST.filter(staff =>
     staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staff.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.department.toLowerCase().includes(searchQuery.toLowerCase())
+    staff.module.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -55,7 +55,7 @@ export default function DirectoryScreen() {
           <Search size={moderateScale(20)} color={textSecondaryColor} />
           <TextInput
             style={[styles.searchInput, { color: textColor }]}
-            placeholder="Search by name, specialty, or dept..."
+            placeholder="Search by name, specialty, or module..."
             placeholderTextColor={textSecondaryColor}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -101,8 +101,8 @@ export default function DirectoryScreen() {
             </View>
 
             <View style={[styles.actionsRow, { borderTopColor: borderColor }]}>
-              <View style={[styles.departmentBadge, { backgroundColor: borderColor }]}>
-                <Text style={[styles.departmentText, { color: textSecondaryColor }]}>{staff.department}</Text>
+              <View style={[styles.moduleBadge, { backgroundColor: borderColor }]}>
+                <Text style={[styles.moduleText, { color: textSecondaryColor }]}>{staff.module}</Text>
               </View>
               <View style={styles.actionButtons}>
                 <TouchableOpacity style={[styles.iconCircle, { backgroundColor: borderColor }]}>
@@ -251,13 +251,13 @@ const styles = ScaledSheet.create({
     borderTopColor: '#F3F4F6',
     paddingTop: '16@vs',
   },
-  departmentBadge: {
+  moduleBadge: {
     backgroundColor: '#F3F4F6',
     paddingHorizontal: '12@s',
     paddingVertical: '6@vs',
     borderRadius: '12@ms',
   },
-  departmentText: {
+  moduleText: {
     color: '#4B5563',
     fontSize: '11@ms',
     fontWeight: '700',

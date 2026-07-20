@@ -29,7 +29,7 @@ export default function ChatLoginScreen() {
   const [inputText, setInputText] = useState('');
   const scrollViewRef = React.useRef<ScrollView>(null);
 
-  const chatName = 'Healthstack Copilot';
+  const chatName = 'Healthstack AI Assistant';
   const chatAvatar = require('@/assets/images/Healthstack.png');
   const isOnline = true;
 

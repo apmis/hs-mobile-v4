@@ -15,20 +15,21 @@ import { ConsultationChatDetail } from '@/src/features/chat/_components/ChatDeta
 export default function ChatWrapperScreen() {
   const { id, fallbackName, fallbackAvatar, initialQuery } = useLocalSearchParams();
   const { data: user } = useUser();
-  const { data: chatRooms = [] } = useChatRooms();
+  const { data: chatRooms = [], isLoading } = useChatRooms();
 
   if (id === 'copilot') {
     return <CopilotChatDetail />;
   }
 
   const apiRoom = chatRooms.find((data: any) => data._id === id);
-  const isGroup = apiRoom ? (apiRoom.members?.length > 2) : (id === '1');
+  const isGroup = apiRoom ? (apiRoom.chatType !== 'personal' && apiRoom.chatType !== 'consultation') : (id === '1');
+  const isLoadingRoom = !apiRoom && isLoading;
 
   if (isGroup) {
-    return <GroupChatDetail id={id} apiRoom={apiRoom} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} initialQuery={initialQuery} user={user} />;
+    return <GroupChatDetail id={id} apiRoom={apiRoom} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} initialQuery={initialQuery} user={user} isLoadingRoom={isLoadingRoom} />;
   }
 
-  return <ConsultationChatDetail id={id} apiRoom={apiRoom} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} initialQuery={initialQuery} user={user} />;
+  return <ConsultationChatDetail id={id} apiRoom={apiRoom} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} initialQuery={initialQuery} user={user} isLoadingRoom={isLoadingRoom} />;
 }
 
 

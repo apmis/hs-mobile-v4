@@ -1,10 +1,10 @@
 # HealthStack Mobile V4
 
-HealthStack Mobile V4 is a modular, feature-rich React Native mobile application built with Expo for managing healthcare departments and clinical workflows.
+HealthStack Mobile V4 is a modular, feature-rich React Native mobile application built with Expo for managing healthcare modules and clinical workflows.
 
 ## 🚀 Features
 
-- **Department-Based Architecture:** Scalable, independent modules for various healthcare functions (e.g., Appointments, Pharmacy, Laboratory, Managed Care, Ward).
+- **Module-Based Architecture:** Scalable, independent modules for various healthcare functions (e.g., Appointments, Pharmacy, Laboratory, Managed Care, Ward).
 - **Intelligent Copilot & Persistent Chat:** A comprehensive, real-time AI Copilot chat interface featuring optimistic UI updates, message editing, and accurate unread tracking.
 - **Offline-Ready Local Storage:** Chunked local storage implementation ensuring resilient message persistence, preventing database crashes, and enabling instant interactions.
 - **Semantic Theming:** Advanced system-aware dark and light mode UI utilizing a robust semantic token system.
@@ -28,7 +28,7 @@ hs-mobile-v4/
 ├── app/                  # Expo Router file-based routing directory
 │   ├── (features)/       # Main feature modules
 │   │   ├── chat/         # Real-time messaging and AI Copilot interface
-│   │   └── departments/  # Individual healthcare department domains
+│   │   └── modules/      # Individual healthcare module domains
 │   │       ├── appointments/
 │   │       ├── pharmacy/
 │   │       ├── managed-care/
@@ -71,6 +71,6 @@ After starting the Expo server, you can run the app on various platforms:
 ## 🏛️ Architecture Overview
 
 HealthStack uses a "Shell and Strategy" architectural pattern for feature modules.
-- **Top-Level Routable Blocks:** Every department maintains its own independent routing logic and encapsulated state, ensuring the codebase scales beautifully as more clinical domains are added.
+- **Top-Level Routable Blocks:** Every module maintains its own independent routing logic and encapsulated state, ensuring the codebase scales beautifully as more clinical domains are added.
 - **Global `AppHeader`:** A shared navigation header handles contextual back actions and houses the global "Ask Copilot" search integration.
 - **Centralized Theming:** Colors and typography are managed semantically (e.g., `primary`, `background`, `card`) instead of hard-coded values, seamlessly bridging light and dark system preferences.

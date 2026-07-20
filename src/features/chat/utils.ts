@@ -59,3 +59,20 @@ export const mapApiMessageToUI = (m: any, user: any) => {
     rawDate: m.createdAt || m.time || new Date()
   };
 };
+
+// HELPER: Get Acronym for Organization
+export const getAcronym = (name?: string, maxLength = 25) => {
+  if (!name) return '';
+  const trimmed = name.trim();
+
+  if (trimmed.length <= maxLength) {
+    return trimmed;
+  }
+
+  const words = trimmed.split(/\s+/);
+  if (words.length === 1) {
+    return words[0].substring(0, 3).toUpperCase();
+  }
+
+  return words.map(w => w[0]).join('').toUpperCase();
+};

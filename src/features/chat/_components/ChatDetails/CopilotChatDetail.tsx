@@ -123,7 +123,7 @@ export function CopilotChatDetail() {
       const aiMsg = {
         id: Date.now().toString(),
         isMe: false,
-        sender: 'HealthStack Copilot',
+        sender: 'HealthStack AI Assistant',
         time: aiTime,
         text: responseText,
         avatar: require('@/assets/images/Healthstack.png'),
@@ -136,7 +136,7 @@ export function CopilotChatDetail() {
       const errorMsg = {
         id: Date.now().toString(),
         isMe: false,
-        sender: 'HealthStack Copilot',
+        sender: 'HealthStack AI Assistant',
         time: aiTime,
         text: `Sorry, I encountered an error: ${error.message || "Could not connect to the API."}`,
         avatar: require('@/assets/images/Healthstack.png'),

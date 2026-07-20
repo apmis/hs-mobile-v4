@@ -16,7 +16,7 @@ import { useChatMessages, useSendMessage, useMarkAsRead } from '../../_api/chat'
 import { useChatDraft } from '../../hooks/useChatDraft';
 import { useKeyboardHeight } from '../../hooks/useKeyboardHeight';
 import { mapApiMessageToUI } from '@/src/features/chat/utils';
-import { formatMessageTime, getMessageDateLabel } from '@/src/features/chat/utils';
+import { formatMessageTime, getMessageDateLabel, getAcronym } from '@/src/features/chat/utils';
 
 import { MyMessageBubble } from '../ui/MyMessageBubble';
 import { OtherMessageBubble } from '../ui/OtherMessageBubble';
@@ -144,7 +144,14 @@ export // -------------------------------------------------------------
         onPressCenter={() => setShowInfoModal(true)}
         title={chatName}
         subtitle={
-          <Text style={[styles.onlineText, !isOnline && { color: textSecondaryColor }]}>{profession}</Text>
+          <View style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+            <Text style={[styles.onlineText, !isOnline && { color: textSecondaryColor }]}>{profession}</Text>
+            {chatPartner?.organization?._id && chatPartner.organization._id !== user?.facilityDetail?._id && (
+              <View style={{ backgroundColor: primaryColor + '15', paddingHorizontal: moderateScale(4), paddingVertical: moderateScale(2), borderRadius: moderateScale(4), marginTop: moderateScale(2) }}>
+                <Text style={{ fontSize: moderateScale(9), color: primaryColor, fontWeight: '600' }}>{getAcronym(chatPartner.organization.facilityName)}</Text>
+              </View>
+            )}
+          </View>
         }
         avatarElement={
           <>

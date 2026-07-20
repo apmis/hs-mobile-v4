@@ -25,86 +25,86 @@ export const useStaffs = (facilityId?: string, locationId?: string) => {
     });
 };
 
-// export const useFacilities = (searchQuery: string) => {
-//     const { data: user } = useUser();
-//     return useQuery({
-//         queryKey: ['facilities', searchQuery],
-//         queryFn: async () => {
-//             if (!searchQuery || searchQuery.length <= 3) return [];
-//             const response = await feathersClient.service('facility').find({
-//                 query: {
-//                     _id: { $ne: user?.facilityDetail?._id },
-//                     $or: [
-//                         { facilityName: { $regex: searchQuery, $options: 'i' } },
-//                         { facilityOwner: { $regex: searchQuery, $options: 'i' } },
-//                         { facilityType: { $regex: searchQuery, $options: 'i' } },
-//                     ],
-//                     $limit: 100,
-//                     $sort: { createdAt: -1 },
-//                 },
-//             });
-//             return response.data || [];
-//         },
-//         enabled: !!user?._id && searchQuery.length > 3,
-//     });
-// };
+export const useFacilities = (searchQuery: string) => {
+    const { data: user } = useUser();
+    return useQuery({
+        queryKey: ['facilities', searchQuery],
+        queryFn: async () => {
+            if (!searchQuery || searchQuery.length <= 3) return [];
+            const response = await feathersClient.service('facility').find({
+                query: {
+                    _id: { $ne: user?.facilityDetail?._id },
+                    $or: [
+                        { facilityName: { $regex: searchQuery, $options: 'i' } },
+                        { facilityOwner: { $regex: searchQuery, $options: 'i' } },
+                        { facilityType: { $regex: searchQuery, $options: 'i' } },
+                    ],
+                    $limit: 100,
+                    $sort: { createdAt: -1 },
+                },
+            });
+            return response.data || [];
+        },
+        enabled: !!user?._id && searchQuery.length > 3,
+    });
+};
 
-// export const useClients = (searchQuery: string) => {
-//     const { data: user } = useUser();
-//     return useQuery({
-//         queryKey: ['clients', searchQuery],
-//         queryFn: async () => {
-//             if (!searchQuery || searchQuery.length <= 3) return [];
-//             const response = await feathersClient.service('client').find({
-//                 query: {
-//                     $or: [
-//                         { firstname: { $regex: searchQuery, $options: 'i' } },
-//                         { lastname: { $regex: searchQuery, $options: 'i' } },
-//                         { phone: { $regex: searchQuery, $options: 'i' } },
-//                         { email: { $regex: searchQuery, $options: 'i' } },
-//                     ],
-//                     "relatedfacilities.facility": user?.currentEmployee?.facilityDetail?._id,
-//                     $limit: 100,
-//                     $sort: { createdAt: -1 },
-//                 },
-//             });
-//             return response.data || [];
-//         },
-//         enabled: !!user?._id && searchQuery.length > 3,
-//     });
-// };
+export const useClients = (searchQuery: string) => {
+    const { data: user } = useUser();
+    return useQuery({
+        queryKey: ['clients', searchQuery],
+        queryFn: async () => {
+            if (!searchQuery || searchQuery.length <= 3) return [];
+            const response = await feathersClient.service('client').find({
+                query: {
+                    $or: [
+                        { firstname: { $regex: searchQuery, $options: 'i' } },
+                        { lastname: { $regex: searchQuery, $options: 'i' } },
+                        { phone: { $regex: searchQuery, $options: 'i' } },
+                        { email: { $regex: searchQuery, $options: 'i' } },
+                    ],
+                    "relatedfacilities.facility": user?.facilityDetail?._id,
+                    $limit: 100,
+                    $sort: { createdAt: -1 },
+                },
+            });
+            return response.data || [];
+        },
+        enabled: !!user?._id && searchQuery.length > 3,
+    });
+};
 
-// export const useLocations = (facilityId?: string) => {
-//     const { data: user } = useUser();
-//     return useQuery({
-//         queryKey: ['locations', facilityId],
-//         queryFn: async () => {
-//             if (!user?._id) return [];
-//             const response = await feathersClient.service('location').find({
-//                 query: {
-//                     facility: facilityId || user?.currentEmployee?.facilityDetail?._id,
-//                     $limit: 200,
-//                     $sort: { createdAt: -1 },
-//                 },
-//             });
-//             return response.data || [];
-//         },
-//         enabled: !!user?._id,
-//     });
-// };
+export const useLocations = (facilityId?: string) => {
+    const { data: user } = useUser();
+    return useQuery({
+        queryKey: ['locations', facilityId],
+        queryFn: async () => {
+            if (!user?._id) return [];
+            const response = await feathersClient.service('location').find({
+                query: {
+                    facility: facilityId || user?.facilityDetail?._id,
+                    $limit: 200,
+                    $sort: { createdAt: -1 },
+                },
+            });
+            return response.data || [];
+        },
+        enabled: !!user?._id,
+    });
+};
 
 export const useStartPersonalChat = () => {
     const { data: user } = useUser();
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (staff: any) => {
+        mutationFn: async ({ userToChat, type = 'staff' }: { userToChat: any, type?: 'staff' | 'client' }) => {
             if (!user) throw new Error('User not found');
             const employee = user;
 
             const newChatRoom = {
-                name: "personal staffs chat",
-                description: "personal chat conversation within 2 staffs",
+                name: `personal ${type} chat`,
+                description: `personal chat conversation between staff and ${type}`,
                 chatType: "personal",
                 members: [
                     {
@@ -119,15 +119,15 @@ export const useStartPersonalChat = () => {
                         organization: employee.facilityDetail,
                     },
                     {
-                        name: `${staff.firstname} ${staff.lastname}`,
-                        phone: staff.phone,
-                        email: staff.email,
-                        imageurl: staff.imageurl || "",
-                        profession: staff.profession,
-                        _id: staff._id,
-                        type: "staff",
-                        model: "employee",
-                        organization: staff.facilityDetail || employee.facilityDetail,
+                        name: `${userToChat.firstname} ${userToChat.lastname}`,
+                        phone: userToChat.phone,
+                        email: userToChat.email,
+                        imageurl: userToChat.imageurl || "",
+                        profession: userToChat.profession || 'Client',
+                        _id: userToChat._id,
+                        type: type,
+                        model: type === 'client' ? 'client' : 'employee',
+                        organization: userToChat.facilityDetail || employee.facilityDetail,
                     },
                 ],
             };

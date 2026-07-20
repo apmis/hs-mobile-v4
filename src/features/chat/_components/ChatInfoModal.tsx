@@ -82,9 +82,9 @@ export function ChatInfoModal({ visible, onClose, apiRoom, user, chatName, chatA
             {/* Profile Info Section */}
             <View style={{ alignItems: 'center', paddingVertical: moderateScale(24), borderBottomWidth: 1, borderBottomColor: borderColor, backgroundColor: cardColor }}>
               {chatAvatar && !imgError ? (
-                <Image 
-                  source={{ uri: chatAvatar }} 
-                  style={{ width: moderateScale(100), height: moderateScale(100), borderRadius: moderateScale(50), marginBottom: moderateScale(16) }} 
+                <Image
+                  source={{ uri: chatAvatar }}
+                  style={{ width: moderateScale(100), height: moderateScale(100), borderRadius: moderateScale(50), marginBottom: moderateScale(16) }}
                   onError={() => setImgError(true)}
                 />
               ) : (
@@ -105,6 +105,19 @@ export function ChatInfoModal({ visible, onClose, apiRoom, user, chatName, chatA
                 <Text style={{ fontSize: moderateScale(14), color: textSecondaryColor, marginTop: moderateScale(4) }}>
                   {chatPartner.profession} {chatPartner.department ? `- ${chatPartner.department}` : ''}
                 </Text>
+              )}
+              {!isGroup && chatPartner?.organization?._id && chatPartner.organization._id !== user?.facilityDetail?._id && (
+                <Text style={{ fontSize: moderateScale(12), color: primaryColor, marginTop: moderateScale(4), fontWeight: '500' }}>
+                  {chatPartner.organization.facilityName}
+                </Text>
+              )}
+
+              {isGroup && apiRoom?.chatType && apiRoom.chatType !== 'personal' && (
+                <View style={{ backgroundColor: primaryColor + '15', paddingHorizontal: moderateScale(12), paddingVertical: moderateScale(4), borderRadius: moderateScale(12), marginTop: moderateScale(8) }}>
+                  <Text style={{ fontSize: moderateScale(12), color: primaryColor, fontWeight: '600' }}>
+                    {apiRoom.chatType} Channel
+                  </Text>
+                </View>
               )}
 
               {isGroup && apiRoom?.description && (
@@ -153,25 +166,30 @@ export function ChatInfoModal({ visible, onClose, apiRoom, user, chatName, chatA
                       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: moderateScale(16), paddingVertical: moderateScale(12), borderBottomWidth: 1, borderBottomColor: borderColor }}>
                         <ChatAvatar chat={{ avatarImg: item.imageurl || fallbackImg }} />
                         <View style={{ marginLeft: moderateScale(12), flex: 1 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Text style={{ fontSize: moderateScale(16), fontWeight: '500', color: textColor }}>
-                            {item._id === user?._id ? 'You' : `${item.firstname || ''} ${item.lastname || item.name || ''}`}
-                          </Text>
-                          {isGroup && item._id === members[0]?._id && (
-                            <View style={{ backgroundColor: primaryColor + '20', paddingHorizontal: moderateScale(6), paddingVertical: moderateScale(2), borderRadius: moderateScale(4), marginLeft: moderateScale(8) }}>
-                              <Text style={{ color: primaryColor, fontSize: moderateScale(10), fontWeight: '600' }}>Group Admin</Text>
-                            </View>
+                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ fontSize: moderateScale(16), fontWeight: '500', color: textColor }}>
+                              {item._id === user?._id ? 'You' : `${item.firstname || ''} ${item.lastname || item.name || ''}`}
+                            </Text>
+                            {isGroup && item._id === members[0]?._id && (
+                              <View style={{ backgroundColor: primaryColor + '20', paddingHorizontal: moderateScale(6), paddingVertical: moderateScale(2), borderRadius: moderateScale(4), marginLeft: moderateScale(8) }}>
+                                <Text style={{ color: primaryColor, fontSize: moderateScale(10), fontWeight: '600' }}>Group Admin</Text>
+                              </View>
+                            )}
+                          </View>
+                          {(item.profession || item.department) && (
+                            <Text style={{ fontSize: moderateScale(13), color: textSecondaryColor, marginTop: moderateScale(2) }}>
+                              {item.profession || 'Member'} {item.department ? `- ${item.department}` : ''}
+                            </Text>
+                          )}
+                          {item.organization?._id && item.organization._id !== user?.facilityDetail?._id && (
+                            <Text style={{ fontSize: moderateScale(11), color: primaryColor, marginTop: moderateScale(2), fontWeight: '500' }}>
+                              {item.organization.facilityName}
+                            </Text>
                           )}
                         </View>
-                        {(item.profession || item.department) && (
-                          <Text style={{ fontSize: moderateScale(13), color: textSecondaryColor, marginTop: moderateScale(2) }}>
-                            {item.profession || 'Member'} {item.department ? `- ${item.department}` : ''}
-                          </Text>
-                        )}
                       </View>
-                    </View>
-                  );
-                }}
+                    );
+                  }}
                 />
               </View>
             )}

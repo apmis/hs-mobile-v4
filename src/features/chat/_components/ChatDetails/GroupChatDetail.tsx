@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, Keyboard } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowLeft, Paperclip2, ExportSquare, TickCircle, People } from 'iconsax-react-native';
+import { TickCircle, People } from 'iconsax-react-native';
 import {
-  MoreVertical,
-  Send,
-  Video,
   Smile,
   User,
 } from 'lucide-react-native';
-import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 
 import { useChatMessages, useSendMessage, useMarkAsRead } from '../../_api/chat';
 import { useChatDraft } from '../../hooks/useChatDraft';
 import { useKeyboardHeight } from '../../hooks/useKeyboardHeight';
 import { mapApiMessageToUI } from '@/src/features/chat/utils';
-import { formatMessageTime, getMessageDateLabel } from '@/src/features/chat/utils';
+import { getMessageDateLabel } from '@/src/features/chat/utils';
 
 import { MyMessageBubble } from '../ui/MyMessageBubble';
 import { OtherMessageBubble } from '../ui/OtherMessageBubble';
@@ -28,7 +25,7 @@ import { ChatInfoModal } from '../ChatInfoModal';
 import Toast from 'react-native-toast-message';
 import * as Clipboard from 'expo-clipboard';
 
-const ClusterImage = ({ m, idx, zIndex, marginLeft, borderColor, textSecondaryColor }: any) => {
+const ClusterImage = ({ m, zIndex, marginLeft, borderColor, textSecondaryColor }: any) => {
   const [imgError, setImgError] = useState(false);
   const memberName = m.firstname ? `${m.firstname} ${m.lastname}` : m.name;
   const imgUri = (m.imageurl && m.imageurl.trim() !== "")
@@ -156,7 +153,7 @@ export // -------------------------------------------------------------
       <ChatHeader
         onPressCenter={() => setShowInfoModal(true)}
         title={apiRoom ? (apiRoom.name || 'Group Chat') : (fallbackName)}
-        subtitle={apiRoom?.description}
+        subtitle={apiRoom ? (apiRoom.chatType && apiRoom.chatType !== 'personal' ? `${apiRoom.chatType} Channel` : apiRoom.description) : undefined}
         avatarElement={
           <View style={styles.groupAvatarCluster}>
             {apiRoom ? (

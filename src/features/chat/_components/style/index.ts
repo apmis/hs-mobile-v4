@@ -160,12 +160,13 @@ export const styles = ScaledSheet.create({
     color: Colors.white,
   },
   listContent: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 0,
   },
   chatRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: moderateScale(16),
+    paddingHorizontal: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },

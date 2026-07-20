@@ -193,7 +193,7 @@ export default function SignupScreen() {
           </View>
 
           <View style={styles.headerTitleContainer}>
-            <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>Healthstack Copilot</Text>
+            <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>Healthstack Ai Assistant</Text>
             <View style={styles.statusRow}>
               <View style={styles.statusInner}>
                 <Text style={styles.onlineText}>Active Now</Text>
