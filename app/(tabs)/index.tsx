@@ -7,12 +7,19 @@ import { useThemeColor } from '@/src/shared/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppHeader from '@/src/shared/components/AppHeader';
-import { useUser } from '@/src/shared/api/auth';
+import { useUser, useLogout } from '@/src/shared/api/auth';
 
 export default function ModulesScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const { data: user } = useUser();
+  const logout = useLogout();
+
+  const handleOptionPress = (option: string) => {
+    if (option === 'Logout') {
+      logout.mutate();
+    }
+  };
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
@@ -49,6 +56,10 @@ export default function ModulesScreen() {
         title="Modules"
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        showIcons={true}
+        showMoreOptions={true}
+        moreOptions={['Logout']}
+        onOptionPress={handleOptionPress}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
