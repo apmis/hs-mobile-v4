@@ -35,13 +35,23 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     console.log("=========================");
 
     if (user === null && (!inAuthGroup || isAtRoot)) {
-      // console.log("[AuthGuard] Redirecting to login because user === null");
       // 🚨 User is explicitly NOT authenticated -> Redirect to login
-      router.replace('/(auth)/login');
+      (async () => {
+        try {
+          await router.replace('/(auth)/login');
+        } catch (e) {
+          console.warn('[AuthGuard] Navigation to login failed (will retry):', e);
+        }
+      })();
     } else if (user && (inAuthGroup || isAtRoot)) {
-      //console.log("[AuthGuard] Redirecting to tabs because user is authenticated");
       // 🛡️ User IS authenticated, but sitting on the login screen or root -> Redirect to app
-      router.replace('/(tabs)');
+      (async () => {
+        try {
+          await router.replace('/(tabs)');
+        } catch (e) {
+          console.warn('[AuthGuard] Navigation to tabs failed (will retry):', e);
+        }
+      })();
     } else {
       // Auth check is complete AND we are on the correct screen.
       // It is now safe to hide the splash screen!

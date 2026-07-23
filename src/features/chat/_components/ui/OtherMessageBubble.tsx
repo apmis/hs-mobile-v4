@@ -3,7 +3,8 @@ import { View, Text, Image, Pressable } from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import { ChartSquare } from 'iconsax-react-native';
 import Markdown from 'react-native-markdown-display';
-import { Colors } from '@/src/shared/constants/Theme';
+//import { Colors } from '@/src/shared/constants/Theme';
+
 
 interface OtherMessageBubbleProps {
   msg: {
@@ -23,6 +24,7 @@ interface OtherMessageBubbleProps {
   onLongPress?: () => void;
   onPress?: () => void;
 }
+
 
 export function OtherMessageBubble({
   msg,
@@ -65,6 +67,51 @@ export function OtherMessageBubble({
     heading4: { marginTop: 0, marginBottom: moderateScale(4), fontSize: moderateScale(15) },
     heading5: { marginTop: 0, marginBottom: moderateScale(4), fontSize: moderateScale(15) },
     heading6: { marginTop: 0, marginBottom: moderateScale(4), fontSize: moderateScale(15) },
+    code_inline: {
+      backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      color: textColor,
+      borderRadius: moderateScale(4),
+      paddingHorizontal: moderateScale(4),
+    },
+    code_block: {
+      backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      color: textColor,
+      borderRadius: moderateScale(8),
+      padding: moderateScale(8),
+      marginBottom: moderateScale(4),
+    },
+    fence: {
+      backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      color: textColor,
+      borderRadius: moderateScale(8),
+      padding: moderateScale(8),
+      marginBottom: moderateScale(4),
+    },
+    table: {
+      borderWidth: 1,
+      borderColor: borderColor,
+      borderRadius: moderateScale(8),
+      marginTop: moderateScale(4),
+      marginBottom: moderateScale(8),
+    },
+    tr: {
+      flexDirection: 'row',
+      borderBottomWidth: 1,
+      borderColor: borderColor,
+    },
+    th: {
+      padding: moderateScale(6),
+      fontWeight: 'bold',
+      color: textColor,
+      flex: 1,
+      textAlign: 'left',
+    },
+    td: {
+      padding: moderateScale(6),
+      color: textColor,
+      flex: 1,
+      textAlign: 'left',
+    },
   } as any;
 
   if (variant === 'consultation') {

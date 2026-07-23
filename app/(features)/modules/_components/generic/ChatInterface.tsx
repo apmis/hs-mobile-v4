@@ -19,35 +19,34 @@ import { ChatInput } from '@/src/features/chat/_components/ui/ChatInput';
 import { MyMessageBubble } from '@/src/features/chat/_components/ui/MyMessageBubble';
 import { OtherMessageBubble } from '@/src/features/chat/_components/ui/OtherMessageBubble';
 import { useKeyboardHeight } from '@/src/features/chat/hooks/useKeyboardHeight';
+import { TypingIndicator } from '@/src/features/chat/_components/ui/loading/TypingIndicator';
 
-interface Message {
+export interface Message {
   id: string;
   sender: string;
   text?: string;
   time: string;
   isMe: boolean;
   image?: string;
-}
-
-interface ChatInterfaceProps {
-  headerComponent?: React.ReactNode;
-  initialMessages?: Message[];
+  isError?: boolean;
+  avatar?: any;
   suggestedActions?: string[];
+  widget?: React.ReactNode;
 }
 
-export default function ChatInterface({ headerComponent, initialMessages, suggestedActions }: ChatInterfaceProps) {
+export interface ChatInterfaceProps {
+  headerComponent?: React.ReactNode;
+  messages?: Message[];
+  isTyping?: boolean;
+  onSend?: (text: string) => void;
+}
+
+export default function ChatInterface({ headerComponent, messages = [], isTyping = false, onSend = () => { } }: ChatInterfaceProps) {
   const insets = useSafeAreaInsets();
   const keyboardHeight = useKeyboardHeight();
   const [inputText, setInputText] = useState('');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
-  const [messages, setMessages] = useState<Message[]>(initialMessages || []);
-
-  React.useEffect(() => {
-    if (initialMessages && initialMessages.length > 0 && messages.length === 0) {
-      setMessages(initialMessages);
-    }
-  }, [initialMessages]);
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
@@ -58,24 +57,7 @@ export default function ChatInterface({ headerComponent, initialMessages, sugges
 
   const handleSend = () => {
     if (!inputText.trim()) return;
-    const now = new Date();
-    const hours = now.getHours();
-    const mins = now.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 || 12;
-    const formattedMins = mins < 10 ? `0${mins}` : mins;
-    const timeStr = `${formattedHours < 10 ? '0' : ''}${formattedHours}:${formattedMins} ${ampm}`;
-
-    setMessages([
-      ...messages,
-      {
-        id: Date.now().toString(),
-        sender: 'You',
-        text: inputText.trim(),
-        time: timeStr,
-        isMe: true,
-      },
-    ]);
+    onSend(inputText.trim());
     setInputText('');
 
     setTimeout(() => {
@@ -96,7 +78,7 @@ export default function ChatInterface({ headerComponent, initialMessages, sugges
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
         {headerComponent && <View style={styles.headerComponentContainer}>{headerComponent}</View>}
-        {messages.map((msg) => (
+        {messages.map((msg, idx) => (
           <View key={msg.id}>
             {msg.image && (
               <TouchableOpacity
@@ -123,38 +105,46 @@ export default function ChatInterface({ headerComponent, initialMessages, sugges
             ) : (
               <OtherMessageBubble
                 msg={{ ...msg, text: msg.text || '' }}
-                variant="consultation"
+                variant="group"
                 cardColor={cardColor}
                 borderColor={borderColor}
-                textColor={textColor}
+                textColor={msg.isError ? '#DC2626' : textColor}
                 textSecondaryColor={textSecondaryColor}
               />
             )}
+
+            {/* Suggested Actions attached to this specific message */}
+            {!msg.isMe && msg.suggestedActions && msg.suggestedActions.length > 0 && (
+              <View style={styles.suggestedActionsContainer}>
+                {msg.suggestedActions.map((action, actionIdx) => (
+                  <TouchableOpacity
+                    key={actionIdx}
+                    style={[styles.actionChip, { backgroundColor: primaryColor + '15', borderColor: primaryColor }]}
+                    onPress={() => {
+                      // We can populate the input or immediately send it. For actions, usually we want to send it immediately.
+                      onSend(action);
+                    }}
+                  >
+                    <Text style={[styles.actionChipText, { color: primaryColor }]}>{action}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
         ))}
-      </ScrollView>
 
-      {/* Suggested Actions */}
-      {suggestedActions && suggestedActions.length > 0 && (
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.suggestedActionsContainer}
-          contentContainerStyle={styles.suggestedActionsContent}
-        >
-          {suggestedActions.map((action, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={[styles.actionChip, { backgroundColor: primaryColor + '15', borderColor: primaryColor }]}
-              onPress={() => {
-                setInputText(action);
-              }}
-            >
-              <Text style={[styles.actionChipText, { color: primaryColor }]}>{action}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+        {isTyping && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: moderateScale(10) }}>
+            <Image
+              source={require('@/assets/images/Healthstack.png')}
+              style={{ width: moderateScale(24), height: moderateScale(24), borderRadius: moderateScale(12), marginRight: moderateScale(8) }}
+            />
+            <View style={{ backgroundColor: cardColor, padding: moderateScale(10), borderRadius: moderateScale(12), borderTopLeftRadius: 0, borderColor, borderWidth: 1, height: moderateScale(36), justifyContent: 'center' }}>
+              <TypingIndicator dotColor={textSecondaryColor} />
+            </View>
+          </View>
+        )}
+      </ScrollView>
 
       {/* Input Area */}
       <ChatInput
@@ -163,6 +153,7 @@ export default function ChatInterface({ headerComponent, initialMessages, sugges
         onSend={handleSend}
         placeholder="Ask Copilot"
         hideAttachments={false}
+        isSending={isTyping}
       />
 
       <Modal
@@ -202,19 +193,18 @@ const styles = ScaledSheet.create({
     marginBottom: moderateScale(20),
   },
   suggestedActionsContainer: {
-    maxHeight: moderateScale(50),
-    minHeight: moderateScale(40),
-    marginBottom: moderateScale(8),
-  },
-  suggestedActionsContent: {
-    paddingHorizontal: Spacing.md,
-    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: moderateScale(4),
+    marginBottom: moderateScale(16),
+    alignItems: 'flex-start',
   },
   actionChip: {
     paddingHorizontal: moderateScale(16),
     paddingVertical: moderateScale(8),
     borderRadius: moderateScale(20),
     borderWidth: 1,
+    marginBottom: moderateScale(8),
     marginRight: moderateScale(8),
   },
   actionChipText: {
